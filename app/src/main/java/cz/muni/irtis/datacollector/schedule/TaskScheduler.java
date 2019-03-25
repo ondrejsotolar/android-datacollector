@@ -23,10 +23,17 @@ public class TaskScheduler {
         every10Seconds = new ArrayList<>();
     }
 
+    /**
+     * Add a runnable metric.
+     * @param metric
+     */
     public void addMetric(Metric metric) {
         every10Seconds.add(metric);
     }
 
+    /**
+     * Starts repeating action with delay.
+     */
     public void startCapturingPeriodicaly() {
         delayHandler.postDelayed(new Runnable() {
             public void run() {
@@ -36,6 +43,9 @@ public class TaskScheduler {
         }, delay10);
     }
 
+    /**
+     * Stop all running tasks and clean the callbacks.
+     */
     public void onDestroy() {
         delayHandler.removeCallbacksAndMessages(null);
     }

@@ -13,13 +13,16 @@ import cz.muni.irtis.datacollector.metrics.BatteryState;
 
 public class SchedulerService extends Service
 {
-    private int testDelay = 10*1000;
+    private int testDelay = 4*1000;
     private static final int CHANNEL_ID = 1337;
 
     private TaskScheduler taskScheduler;
     private NotificationBuilder notificationBuilder;
 
-
+    /**
+     * Start the service. If version is high enough, starts in foreground.
+     * @param context App context
+     */
     public static void startMeUp(Context context) {
         Intent i = new Intent(context, SchedulerService.class);
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
