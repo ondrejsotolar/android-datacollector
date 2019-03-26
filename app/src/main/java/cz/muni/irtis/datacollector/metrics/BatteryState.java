@@ -6,12 +6,17 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.widget.Toast;
 
+import java.time.LocalDateTime;
+
+import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
 public class BatteryState extends Metric {
 
     private IntentFilter ifilter;
     private Intent batteryStatus;
+    private int currentLevel = -1;
+
 
     public BatteryState(Context context, Object... params) {
         super(context, params);
@@ -31,5 +36,20 @@ public class BatteryState extends Metric {
 
         Toast.makeText(getContext(), "Battery is at: " + batteryPct + "%",
                 Toast.LENGTH_SHORT).show();
+
+        save(LocalDateTime.now());
+    }
+
+    /**
+     * Save recent metric to DB
+     */
+    @Override
+    public void save(LocalDateTime dateTime) {
+        setDateTime(dateTime);
+        Query.saveMetric(this);
+    }
+
+    public int getLevel() {
+        return currentLevel;
     }
 }

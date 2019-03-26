@@ -13,8 +13,9 @@ import cz.muni.irtis.datacollector.metrics.BatteryState;
 
 public class SchedulerService extends Service
 {
-    private int testDelay = 4*1000;
+    private int testDelay = 10*1000;
     private static final int CHANNEL_ID = 1337;
+    private static boolean isServiceRunning = false;
 
     private TaskScheduler taskScheduler;
     private NotificationBuilder notificationBuilder;
@@ -24,12 +25,17 @@ public class SchedulerService extends Service
      * @param context App context
      */
     public static void startMeUp(Context context) {
-        Intent i = new Intent(context, SchedulerService.class);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
-            context.startForegroundService(i);
+        if (!isServiceRunning) {
+            Intent i = new Intent(context, SchedulerService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(i);
+            } else {
+                context.startService(i);
+            }
+            isServiceRunning = true;
         }
         else {
-            context.startService(i);
+            Log.d("SchedulerService: ", "Already running.");
         }
     }
 
@@ -57,6 +63,7 @@ public class SchedulerService extends Service
     @Override
     public void onDestroy() {
         taskScheduler.onDestroy();
+        isServiceRunning = false;
         super.onDestroy();
     }
 
