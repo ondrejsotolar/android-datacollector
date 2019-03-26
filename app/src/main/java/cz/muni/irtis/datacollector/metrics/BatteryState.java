@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
+import static android.content.Context.BATTERY_SERVICE;
+
 public class BatteryState extends Metric {
 
     private IntentFilter ifilter;
@@ -30,11 +32,10 @@ public class BatteryState extends Metric {
      */
     @Override
     public void run() {
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        int batteryPct = (int) (level / (float)scale) * 100;
+        BatteryManager bm = (BatteryManager) getContext().getSystemService(BATTERY_SERVICE);
+        currentLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
 
-        Toast.makeText(getContext(), "Battery is at: " + batteryPct + "%",
+        Toast.makeText(getContext(), "Battery is at: " + currentLevel + "%",
                 Toast.LENGTH_SHORT).show();
 
         save(LocalDateTime.now());
