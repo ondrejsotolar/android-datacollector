@@ -2,7 +2,6 @@ package cz.muni.irtis.datacollector.metrics;
 
 import android.content.Context;
 import android.os.BatteryManager;
-import android.widget.Toast;
 
 import java.time.LocalDateTime;
 
@@ -25,10 +24,6 @@ public class BatteryState extends Metric {
     public void run() {
         BatteryManager bm = (BatteryManager) getContext().getSystemService(BATTERY_SERVICE);
         currentLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-
-        Toast.makeText(getContext(), "Battery is at: " + currentLevel + "%",
-                Toast.LENGTH_SHORT).show();
-
         save(LocalDateTime.now());
     }
 
@@ -37,7 +32,7 @@ public class BatteryState extends Metric {
      */
     @Override
     public void save(LocalDateTime dateTime, Object... params) {
-        setDateTime(dateTime);
+        super.save(dateTime, params);
         Query.saveMetric(this);
     }
 

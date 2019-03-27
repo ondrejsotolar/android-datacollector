@@ -36,6 +36,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return singleton;
     }
 
+    /**
+     * Create tables (on first run).
+     * @param db
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " +

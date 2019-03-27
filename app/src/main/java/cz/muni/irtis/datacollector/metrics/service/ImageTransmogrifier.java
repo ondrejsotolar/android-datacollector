@@ -12,6 +12,9 @@ import java.nio.ByteBuffer;
 
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 
+/**
+ * Taken from https://commonsware.com/Android (Apache License 2.0)
+ */
 public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener {
     private final int width;
     private final int height;
@@ -22,7 +25,7 @@ public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener
     public ImageTransmogrifier(Screenshot screenshotMetric) {
         this.screenshotMetric = screenshotMetric;
 
-        Display display=screenshotMetric.getWmgr().getDefaultDisplay();
+        Display display=screenshotMetric.getWindowManager().getDefaultDisplay();
         Point size=new Point();
 
         display.getSize(size);
@@ -81,7 +84,7 @@ public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener
             byte[] newPng=baos.toByteArray();
 
             String url = ScreenshotSaver.processImage(newPng, screenshotMetric.getContext());
-            screenshotMetric.stopCapture(url);
+            screenshotMetric.finishCapture(url);
         }
     }
 

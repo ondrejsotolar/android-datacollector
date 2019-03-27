@@ -12,9 +12,9 @@ import android.view.WindowManager;
 
 import java.time.LocalDateTime;
 
+import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.service.ImageTransmogrifier;
 import cz.muni.irtis.datacollector.schedule.Metric;
-import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
 import static android.content.Context.MEDIA_PROJECTION_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
@@ -31,17 +31,24 @@ public class Screenshot extends Metric {
     private Handler handler;
     private int resultCode;
     private Intent resultData;
-    private MediaProjectionManager mgr;
-    private WindowManager wmgr;
+    private MediaProjectionManager mediaProjectionManager;
+    private WindowManager windowManager;
     private MediaProjection projection;
-    private VirtualDisplay vdisplay;
-    private ImageTransmogrifier it;
+    private VirtualDisplay virtualDisplay;
+    private ImageTransmogrifier imageTransmogrifier;
 
+    /**
+     * Constructor.
+     * Init system services, handler thread, get permission from params.
+     * @param context context
+     * @param params 0: resultCode, 1: resultIntent - special permission for media projection API
+     */
     public Screenshot(Context context, Object... params) {
         super(context, params);
 
-        mgr = (MediaProjectionManager) getContext().getSystemService(MEDIA_PROJECTION_SERVICE);
-        wmgr = (WindowManager) getContext().getSystemService(WINDOW_SERVICE);
+        mediaProjectionManager =
+                (MediaProjectionManager) getContext().getSystemService(MEDIA_PROJECTION_SERVICE);
+        windowManager = (WindowManager) getContext().getSystemService(WINDOW_SERVICE);
 
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
@@ -52,36 +59,53 @@ public class Screenshot extends Metric {
 
     @Override
     public void save(LocalDateTime dateTime, Object... params) {
-
+        super.save(dateTime, params);
+        Query.saveMetric(this);
     }
 
+    /**
+     * Run the media projection.
+     * Register callback with the image saver (ImageTransmogrifier).
+     */
     @Override
     public void run() {
-        projection = mgr.getMediaProjection(resultCode, resultData);
-        it = new ImageTransmogrifier(this);
+        projection = mediaProjectionManager.getMediaProjection(resultCode, resultData);
+        imageTransmogrifier = new ImageTransmogrifier(this);
 
-        MediaProjection.Callback cb = new MediaProjection.Callback() {
+        MediaProjection.Callback callback = new MediaProjection.Callback() {
             @Override
             public void onStop() {
-                vdisplay.release();
+                virtualDisplay.release();
             }
         };
 
-        vdisplay = projection.createVirtualDisplay(getClass().getSimpleName(),
-                it.getWidth(), it.getHeight(),
+        virtualDisplay = projection.createVirtualDisplay(
+                getClass().getSimpleName(),
+                imageTransmogrifier.getWidth(),
+                imageTransmogrifier.getHeight(),
                 getContext().getResources().getDisplayMetrics().densityDpi,
-                VIRT_DISPLAY_FLAGS, it.getSurface(), null, handler);
-        projection.registerCallback(cb, handler);
+                VIRT_DISPLAY_FLAGS,
+                imageTransmogrifier.getSurface(),
+                null,
+                handler);
+
+        projection.registerCallback(callback, handler);
     }
 
-    public void stopCapture(String url) {
+    /**
+     * Save the image URL & clean virtual display resources.
+     * @param imagePath absolute path to image
+     */
+    public void finishCapture(String imagePath) {
         if (projection != null) {
             projection.stop();
-            vdisplay.release();
+            if (virtualDisplay != null) {
+                virtualDisplay.release();
+            }
             projection = null;
         }
-        if (url != null && !"".equals(url)) {
-            save(LocalDateTime.now(), url);
+        if (imagePath != null && !"".equals(imagePath)) {
+            save(LocalDateTime.now(), imagePath);
         }
     }
 
@@ -93,7 +117,7 @@ public class Screenshot extends Metric {
         return handler;
     }
 
-    public WindowManager getWmgr() {
-        return wmgr;
+    public WindowManager getWindowManager() {
+        return windowManager;
     }
 }
