@@ -10,7 +10,6 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 public class NotificationBuilder {
-
     private static final String CHANNEL_MIN="channel_min";
     private static final String CHANNEL_LOW="channel_low";
 
@@ -40,5 +39,4 @@ public class NotificationBuilder {
 
         return(builder.build());
     }
-
 }

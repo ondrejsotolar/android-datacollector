@@ -12,4 +12,7 @@ public class Const {
     static final String TABLE_BATTERY_STATE = "battery_state";
     static final String COLUMN_DATETIME_ID = "datetime_id";
     static final String COLUMN_STATE_PERCENT = "state_percent";
+
+    static final String TABLE_SCREENSHOTS = "screenshots";
+    static final String COLUMN_URL = "device_url";
 }

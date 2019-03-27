@@ -12,7 +12,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class TaskScheduler {
-
     final Handler delayHandler;
     final int delay10;
     private List<Metric> every10Seconds;

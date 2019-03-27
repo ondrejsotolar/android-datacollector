@@ -1,8 +1,6 @@
 package cz.muni.irtis.datacollector.metrics;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.widget.Toast;
 
@@ -14,17 +12,10 @@ import cz.muni.irtis.datacollector.schedule.Metric;
 import static android.content.Context.BATTERY_SERVICE;
 
 public class BatteryState extends Metric {
-
-    private IntentFilter ifilter;
-    private Intent batteryStatus;
     private int currentLevel = -1;
-
 
     public BatteryState(Context context, Object... params) {
         super(context, params);
-
-        ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        batteryStatus = getContext().registerReceiver(null, ifilter);
     }
 
     /**
@@ -45,7 +36,7 @@ public class BatteryState extends Metric {
      * Save recent metric to DB
      */
     @Override
-    public void save(LocalDateTime dateTime) {
+    public void save(LocalDateTime dateTime, Object... params) {
         setDateTime(dateTime);
         Query.saveMetric(this);
     }

@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".schedule.SchedulerService"/>
+        <service android:exported="true" android:name=".schedule.SchedulerService"/>
     </application>
 
 </manifest>

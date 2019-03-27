@@ -1,15 +1,8 @@
 package cz.muni.irtis.datacollector.database;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import cz.muni.irtis.datacollector.metrics.BatteryState;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int SCHEMA = 1;
@@ -32,6 +25,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return singleton;
     }
 
+    /**
+     * Get instance. Throws if previously not initialized with context.
+     * @return instance
+     */
     public static synchronized DatabaseHelper getInstance() {
         if (singleton == null) {
             throw new RuntimeException("Database not initialized!");
@@ -51,7 +48,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Const.COLUMN_STATE_PERCENT + " INTEGER, " +
                 Const.COLUMN_DATETIME_ID + " INTEGER, " +
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
-                    "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
+        );
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_SCREENSHOTS + "( " +
+                Const.COLUMN_URL + " TEXT, " +
+                Const.COLUMN_DATETIME_ID + " INTEGER, " +
+                "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
     }
 

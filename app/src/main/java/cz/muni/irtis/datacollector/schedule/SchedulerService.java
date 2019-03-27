@@ -10,27 +10,31 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
+import cz.muni.irtis.datacollector.metrics.Screenshot;
 
-public class SchedulerService extends Service
-{
+public class SchedulerService extends Service {
+    public static final String EXTRA_RESULT_CODE = "resultCode";
+    public static final String EXTRA_RESULT_INTENT = "resultIntent";
+
     private int testDelay = 10*1000;
     private static final int CHANNEL_ID = 1337;
     private static boolean isServiceRunning = false;
-
     private TaskScheduler taskScheduler;
     private NotificationBuilder notificationBuilder;
+    private static Intent screenshotData;
 
     /**
      * Start the service. If version is high enough, starts in foreground.
      * @param context App context
      */
-    public static void startMeUp(Context context) {
+    public static void startMeUp(Context context, Intent screenshotIntent) {
         if (!isServiceRunning) {
             Intent i = new Intent(context, SchedulerService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                screenshotData = screenshotIntent;
                 context.startForegroundService(i);
             } else {
-                context.startService(i);
+                throw new IllegalStateException("Trying to start SchedulerService in the background!");
             }
             isServiceRunning = true;
         }
@@ -75,6 +79,13 @@ public class SchedulerService extends Service
     }
 
     private void initMetrics() {
-        taskScheduler.addMetric(new BatteryState(getApplicationContext(), testDelay/1000));
+        //taskScheduler.addMetric(new BatteryState(getApplicationContext()));
+
+        int resultCode=screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
+        Intent resultData=screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
+
+        taskScheduler.addMetric(new Screenshot(getApplicationContext(),resultCode, resultData));
     }
+
+
 }
