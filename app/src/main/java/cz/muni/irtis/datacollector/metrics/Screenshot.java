@@ -36,6 +36,7 @@ public class Screenshot extends Metric {
     private MediaProjection projection;
     private VirtualDisplay virtualDisplay;
     private ImageTransmogrifier imageTransmogrifier;
+    private String imagePath;
 
     /**
      * Constructor.
@@ -105,12 +106,13 @@ public class Screenshot extends Metric {
             projection = null;
         }
         if (imagePath != null && !"".equals(imagePath)) {
-            save(LocalDateTime.now(), imagePath);
+            this.imagePath = imagePath;
+            save(LocalDateTime.now());
         }
     }
 
     public String getUrl() {
-        throw new UnsupportedOperationException();
+        return imagePath;
     }
 
     public Handler getHandler() {

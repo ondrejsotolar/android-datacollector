@@ -79,12 +79,11 @@ public class SchedulerService extends Service {
     }
 
     private void initMetrics() {
-        //taskScheduler.addMetric(new BatteryState(getApplicationContext()));
+        taskScheduler.addMetric(new BatteryState(getApplicationContext()));
 
-        int resultCode=screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
-        Intent resultData=screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
-
-        taskScheduler.addMetric(new Screenshot(getApplicationContext(),resultCode, resultData));
+        int resultCode = screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
+        Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
+        taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData));
     }
 
 
