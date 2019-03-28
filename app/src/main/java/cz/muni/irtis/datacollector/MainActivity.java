@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Start SchedulerService if user agrees & return to main layout
+     * Start SchedulerService if user has given permission, then return to main layout
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

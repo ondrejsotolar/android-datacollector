@@ -1,4 +1,4 @@
-package cz.muni.irtis.datacollector.metrics.service;
+package cz.muni.irtis.datacollector.metrics.util;
 
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
