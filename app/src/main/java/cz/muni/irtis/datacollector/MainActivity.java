@@ -12,10 +12,19 @@ public class MainActivity extends AppCompatActivity {
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
     private MediaProjectionManager projectionMgr;
 
+    /**
+     * Run the scheduler service only if it's not already running.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createScreenCaptureIntent();
+
+        if (!SchedulerService.IS_RUNNING) {
+            createScreenCaptureIntent();
+        } else {
+            setContentView(R.layout.activity_main);
+        }
     }
 
     @Override

@@ -15,10 +15,11 @@ import cz.muni.irtis.datacollector.metrics.Screenshot;
 public class SchedulerService extends Service {
     public static final String EXTRA_RESULT_CODE = "resultCode";
     public static final String EXTRA_RESULT_INTENT = "resultIntent";
+    public static boolean IS_RUNNING = false;
 
     private int testDelay = 10*1000;
     private static final int CHANNEL_ID = 1337;
-    private static boolean isServiceRunning = false;
+
     private TaskScheduler taskScheduler;
     private NotificationBuilder notificationBuilder;
     private static Intent screenshotData;
@@ -28,7 +29,7 @@ public class SchedulerService extends Service {
      * @param context App context
      */
     public static void startMeUp(Context context, Intent screenshotIntent) {
-        if (!isServiceRunning) {
+        if (!IS_RUNNING) {
             Intent i = new Intent(context, SchedulerService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 screenshotData = screenshotIntent;
@@ -36,7 +37,7 @@ public class SchedulerService extends Service {
             } else {
                 throw new IllegalStateException("Trying to start SchedulerService in the background!");
             }
-            isServiceRunning = true;
+            IS_RUNNING = true;
         }
         else {
             Log.d("SchedulerService: ", "Already running.");
@@ -67,7 +68,7 @@ public class SchedulerService extends Service {
     @Override
     public void onDestroy() {
         taskScheduler.onDestroy();
-        isServiceRunning = false;
+        IS_RUNNING = false;
         super.onDestroy();
     }
 
