@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">DataCollector</string>
+    <string name="main_info_text">The app takes metrics for scientific purposes.</string>
+    <string name="startButton_text">Start taking metrics</string>
+    <string name="stopButton_text">Stop taking metrics</string>
+    <string name="start_taking_metrics">Start taking metrics</string>
+    <string name="metrics_taking_stopped">Metrics taking stopped</string>
+    <string name="already_running">Already running</string>
+    <string name="no_metrics_are_running">No metrics are running</string>
 </resources>

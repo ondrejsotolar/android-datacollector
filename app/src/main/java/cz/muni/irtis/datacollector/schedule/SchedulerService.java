@@ -28,7 +28,7 @@ public class SchedulerService extends Service {
      * Start the service. If version is high enough, starts in foreground.
      * @param context App context
      */
-    public static void startMeUp(Context context, Intent screenshotIntent) {
+    public static void startRunning(Context context, Intent screenshotIntent) {
         if (!IS_RUNNING) {
             Intent i = new Intent(context, SchedulerService.class);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -41,6 +41,15 @@ public class SchedulerService extends Service {
         }
         else {
             Log.d("SchedulerService: ", "Already running.");
+        }
+    }
+
+    public static void stopRunning(Context context, Intent serviceName) {
+        if (IS_RUNNING) {
+            context.stopService(serviceName);
+        }
+        else {
+            Log.d("SchedulerService: ", "Trying to stop not running service.");
         }
     }
 
@@ -69,6 +78,7 @@ public class SchedulerService extends Service {
     public void onDestroy() {
         taskScheduler.onDestroy();
         IS_RUNNING = false;
+        stopForeground(false);
         super.onDestroy();
     }
 
@@ -86,6 +96,7 @@ public class SchedulerService extends Service {
         Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
         taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData));
     }
+
 
 
 }
