@@ -7,4 +7,5 @@
     <string name="metrics_taking_stopped">Metrics taking stopped</string>
     <string name="already_running">Already running</string>
     <string name="no_metrics_are_running">No metrics are running</string>
+    <string name="permissions_denied">You have to give the app all permissions required.</string>
 </resources>

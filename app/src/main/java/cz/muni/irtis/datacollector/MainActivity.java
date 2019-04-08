@@ -2,7 +2,6 @@ package cz.muni.irtis.datacollector;
 
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,28 +10,50 @@ import android.widget.Toast;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
-public class MainActivity extends AppCompatActivity {
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+public class MainActivity extends PermissionAppCompatActivity {
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
     private MediaProjectionManager projectionMgr;
 
-    /**
-     * Run the scheduler service only if it's not already running.
-     * @param savedInstanceState
-     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initButtons();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        isInPermission = false;
+        if (requestCode == REQUEST_PERMISSION) {
+            if (hasAllPermissions(getDesiredDangerousPermissions())) {
+                onReady(state);
+            }
+            else {
+                onPermissionDenied();
+            }
+        }
     }
 
     @Override
-    protected void onStart() {
+    protected String[] getDesiredDangerousPermissions() {
+        return new String[] {
+                ACCESS_FINE_LOCATION
+        };
+    }
+
+    @Override
+    protected void onPermissionDenied() {
+        Toast.makeText(this, getString(R.string.permissions_denied), Toast.LENGTH_LONG)
+                .show();
+        finish();
+    }
+
+    /**
+     * Run the scheduler service only if it's not already running.
+     */
+    @Override
+    protected void onReady(Bundle state) {
+        setContentView(R.layout.activity_main);
+        initButtons();
         DatabaseHelper.getInstance(this);
         if (!SchedulerService.IS_RUNNING) {
             createScreenCaptureIntent();
         }
-        super.onStart();
     }
 
     /**
