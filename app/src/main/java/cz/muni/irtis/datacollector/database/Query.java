@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
+import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 
 public class Query {
@@ -44,7 +45,23 @@ public class Query {
         cv.put(Const.COLUMN_URL, metric.getUrl());
 
         long result = db.getWritableDatabase().insert(Const.TABLE_SCREENSHOTS, null, cv);
-        logCount();
+        return result;
+    }
+
+    /**
+     * Save Location metric to database.
+     * @param metric Location
+     * @return
+     */
+    public static long saveMetric(Location metric) {
+        long dateTimeId = saveNewTimeEntry(metric.getDateTime());
+
+        ContentValues cv = new ContentValues();
+        cv.put(Const.COLUMN_DATETIME_ID, dateTimeId);
+        cv.put(Const.COLUMN_LATITUDE, metric.getRoundedLat());
+        cv.put(Const.COLUMN_LONGITUDE, metric.getRoundedLon());
+
+        long result = db.getWritableDatabase().insert(Const.TABLE_GPS_LOCATION, null, cv);
         return result;
     }
 
@@ -54,8 +71,10 @@ public class Query {
     private static void logCount() {
         long dCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_DATETIME);
         long bCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_BATTERY_STATE);
+        long sCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_SCREENSHOTS);
+        long lCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_GPS_LOCATION);
 
-        Log.d("DB Record count: ", dCount + "," + bCount);
+        Log.d("DB Record count: ", dCount + "," + bCount+ "," + sCount+ "," + lCount);
     }
 
     private static long saveNewTimeEntry(LocalDateTime dateTime) {

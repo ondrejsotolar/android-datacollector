@@ -15,4 +15,8 @@ public class Const {
 
     static final String TABLE_SCREENSHOTS = "screenshots";
     static final String COLUMN_URL = "device_url";
+
+    static final String TABLE_GPS_LOCATION = "gps_location";
+    static final String COLUMN_LATITUDE = "latitude";
+    static final String COLUMN_LONGITUDE = "longitude";
 }

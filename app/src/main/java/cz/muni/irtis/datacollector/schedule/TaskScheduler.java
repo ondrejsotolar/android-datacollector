@@ -47,10 +47,13 @@ public class TaskScheduler {
      */
     public void onDestroy() {
         delayHandler.removeCallbacksAndMessages(null);
+        for (int i = 0; i < every10Seconds.size(); i++) {
+            every10Seconds.get(i).stop();
+        }
     }
 
     private void startCapture() {
-        for (int i = 0; i< every10Seconds.size(); i++) {
+        for (int i = 0; i < every10Seconds.size(); i++) {
             every10Seconds.get(i).run();
         }
     }

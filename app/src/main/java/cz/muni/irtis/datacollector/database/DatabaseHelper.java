@@ -61,6 +61,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_GPS_LOCATION + "( " +
+                Const.COLUMN_LATITUDE + " REAL, " +
+                Const.COLUMN_LONGITUDE + " REAL, " +
+                Const.COLUMN_DATETIME_ID + " INTEGER, " +
+                "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
+        );
     }
 
     @Override

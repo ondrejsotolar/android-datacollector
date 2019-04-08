@@ -9,7 +9,7 @@ import java.util.List;
 
 import cz.muni.irtis.datacollector.metrics.condition.Condition;
 
-public abstract class Metric implements Runnable, Persistent {
+public abstract class Metric implements Runnable, Stoppable, Persistent {
     private Context context;
     private Object[] params;
     private LocalDateTime dateTimeCollected;
@@ -53,4 +53,6 @@ public abstract class Metric implements Runnable, Persistent {
         }
         throw new IllegalStateException("No metric of type '" + type.toString() + "' found.");
     }
+
+    public void stop() {}
 }

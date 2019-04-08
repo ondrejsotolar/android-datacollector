@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
+import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 
 public class SchedulerService extends Service {
@@ -95,6 +96,8 @@ public class SchedulerService extends Service {
         int resultCode = screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
         Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
         taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData));
+
+        taskScheduler.addMetric(new Location(getApplicationContext()));
     }
 
 
