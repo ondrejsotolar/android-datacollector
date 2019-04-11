@@ -6,10 +6,20 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Random;
 import java.util.UUID;
 
 public class ScreenshotSaver {
+
+    private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+            .appendPattern("yyyyMMddHHmmss")
+            .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+            .toFormatter();
+
     /**
      * Save PNG image to local storage & return absolute path.
      * File has 64 char long random UUID name.
@@ -18,7 +28,7 @@ public class ScreenshotSaver {
      * @return absolute path to file
      */
     public static String processImage(final byte[] png, final Context context) {
-        String fileName = UUID.randomUUID().toString() + ".png";
+        String fileName = LocalDateTime.now().format(formatter) + ".png";
         File output = new File(context.getExternalFilesDir(null), fileName);
         try {
             FileOutputStream fos = new FileOutputStream(output);

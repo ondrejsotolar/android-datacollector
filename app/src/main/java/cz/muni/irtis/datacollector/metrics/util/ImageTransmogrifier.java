@@ -14,6 +14,8 @@ import cz.muni.irtis.datacollector.metrics.Screenshot;
 
 /**
  * Taken from https://commonsware.com/Android (Apache License 2.0)
+ *
+ * Added counter to discard extra frames from ImageReader
  */
 public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener {
     private final int width;
@@ -21,6 +23,7 @@ public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener
     private final ImageReader imageReader;
     private Bitmap latestBitmap=null;
     private Screenshot screenshotMetric;
+    private int counter;
 
     public ImageTransmogrifier(Screenshot screenshotMetric) {
         this.screenshotMetric = screenshotMetric;
@@ -40,6 +43,7 @@ public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener
 
         this.width=width;
         this.height=height;
+        this.counter = 0;
 
         imageReader=ImageReader.newInstance(width, height,
                 PixelFormat.RGBA_8888, 2);
@@ -48,6 +52,9 @@ public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener
 
     @Override
     public void onImageAvailable(ImageReader reader) {
+        if (counter++ > 0) {
+            return;
+        }
         final Image image=imageReader.acquireLatestImage();
 
         if (image!=null) {

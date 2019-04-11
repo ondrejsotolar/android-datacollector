@@ -1,6 +1,7 @@
 package cz.muni.irtis.datacollector.metrics;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -18,10 +19,14 @@ public class Location extends Metric implements LocationListener{
     private boolean isRunning = false;
     private double roundedLat;
     private double roundedLon;
+    private int minTimeMilis;
+    private int minDistance;
 
     public Location(Context context, Object... params) {
         super(context, params);
         locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+        minTimeMilis = (int) params[0];
+        minDistance = (int) params[1];
     }
 
     /**
@@ -33,8 +38,8 @@ public class Location extends Metric implements LocationListener{
         if (!isRunning) {
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
-                    1000 * 10,
-                    0,
+                    minTimeMilis,
+                    minDistance,
                     this);
             isRunning = true;
         }

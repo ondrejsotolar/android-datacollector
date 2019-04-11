@@ -97,7 +97,7 @@ public class SchedulerService extends Service {
         Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
         taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData));
 
-        taskScheduler.addMetric(new Location(getApplicationContext()));
+        taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0));
     }
 
 

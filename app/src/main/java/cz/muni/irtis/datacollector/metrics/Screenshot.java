@@ -53,11 +53,11 @@ public class Screenshot extends Metric {
                 (MediaProjectionManager) getContext().getSystemService(MEDIA_PROJECTION_SERVICE);
         windowManager = (WindowManager) getContext().getSystemService(WINDOW_SERVICE);
 
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
-
         resultCode = (int) params[0];
         resultData = (Intent) params[1];
+
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
 
         addPrerequisity(new IsScreenOn());
     }
@@ -112,6 +112,7 @@ public class Screenshot extends Metric {
             }
             projection = null;
         }
+
         if (imagePath != null && !"".equals(imagePath)) {
             this.imagePath = imagePath;
             save(LocalDateTime.now());
