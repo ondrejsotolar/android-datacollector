@@ -11,10 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.Random;
-import java.util.UUID;
 
 public class ScreenshotSaver {
-
     private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .appendPattern("yyyyMMddHHmmss")
             .appendValue(ChronoField.MILLI_OF_SECOND, 3)

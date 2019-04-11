@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
@@ -42,7 +43,7 @@ public class NotificationBuilder {
 
         Intent notifIntent = new Intent(context, MainActivity.class);
         PendingIntent backToActivity = PendingIntent.getActivity(
-                context, 0, notifIntent, PendingIntent.FLAG_NO_CREATE);
+                context, 0, notifIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(backToActivity);
 
         return builder.build();
