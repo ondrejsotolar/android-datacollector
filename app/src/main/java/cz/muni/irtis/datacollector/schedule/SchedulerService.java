@@ -11,6 +11,7 @@ import android.util.Log;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.Location;
+import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 
 public class SchedulerService extends Service {
@@ -98,8 +99,7 @@ public class SchedulerService extends Service {
         taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData));
 
         taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0));
+
+        taskScheduler.addMetric(new PhysicalActivity(getApplicationContext(), testDelay));
     }
-
-
-
 }

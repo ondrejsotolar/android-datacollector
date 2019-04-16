@@ -16,7 +16,7 @@ import static android.content.Context.LOCATION_SERVICE;
 public class Location extends Metric implements LocationListener{
 
     LocationManager locationManager;
-    private boolean isRunning = false;
+
     private double roundedLat;
     private double roundedLon;
     private int minTimeMilis;
@@ -30,18 +30,18 @@ public class Location extends Metric implements LocationListener{
     }
 
     /**
-     * Register location updates per 10 seconds
+     * Register location updates delay from starting intent
      */
     @Override
     @SuppressWarnings({"MissingPermission"})
     public void run() {
-        if (!isRunning) {
+        if (!isRunning()) {
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
                     minTimeMilis,
                     minDistance,
                     this);
-            isRunning = true;
+            setRunning(true);
         }
     }
 
@@ -51,7 +51,7 @@ public class Location extends Metric implements LocationListener{
     @Override
     public void stop() {
         locationManager.removeUpdates(this);
-        isRunning = false;
+        setRunning(false);
     }
 
     @Override

@@ -14,6 +14,7 @@ public abstract class Metric implements Runnable, Stoppable, Persistent {
     private Object[] params;
     private LocalDateTime dateTimeCollected;
     private List<Condition> prerequisitises;
+    private boolean isRunning = false;
 
     public Metric(Context context, Object... params) {
         this.context = context;
@@ -52,6 +53,14 @@ public abstract class Metric implements Runnable, Stoppable, Persistent {
             }
         }
         throw new IllegalStateException("No metric of type '" + type.toString() + "' found.");
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
     }
 
     public void stop() {}
