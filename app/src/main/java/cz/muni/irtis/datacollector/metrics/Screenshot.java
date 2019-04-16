@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
-import cz.muni.irtis.datacollector.metrics.util.ImageTransmogrifier;
+import cz.muni.irtis.datacollector.metrics.util.screenshot.ImageTransmogrifier;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
 import static android.content.Context.MEDIA_PROJECTION_SERVICE;

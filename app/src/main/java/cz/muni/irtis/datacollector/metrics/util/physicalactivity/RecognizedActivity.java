@@ -2,11 +2,14 @@ package cz.muni.irtis.datacollector.metrics.util.physicalactivity;
 
 import com.google.android.gms.location.DetectedActivity;
 
+/**
+ * Mapping from DetectedActivity codes to strings.
+ */
 public class RecognizedActivity {
     /**
      * Convert activity code to String
-     * @param i
-     * @return
+     * @param i DetectedActivity code
+     * @return DetectedActivity field name
      */
     public static String toString(int i) {
         switch (i) {

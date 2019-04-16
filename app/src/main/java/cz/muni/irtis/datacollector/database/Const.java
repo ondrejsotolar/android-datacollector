@@ -1,6 +1,6 @@
 package cz.muni.irtis.datacollector.database;
 
-public class Const {
+class Const {
     static final String DATABASE_NAME = "metrics.db";
     static final String TITLE = "title";
     static final String VALUE = "value";
@@ -19,4 +19,8 @@ public class Const {
     static final String TABLE_GPS_LOCATION = "gps_location";
     static final String COLUMN_LATITUDE = "latitude";
     static final String COLUMN_LONGITUDE = "longitude";
+
+    static final String TABLE_ACTIVITY_RECOGNITION = "activity_recognition";
+    static final String COLUMN_ACTIVITY = "activity";
+    static final String COLUMN_CONFIDENCE = "confidence";
 }

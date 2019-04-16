@@ -8,14 +8,18 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.time.LocalDateTime;
+
+import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.util.physicalactivity.BackgroundDetectedActivitiesService;
 import cz.muni.irtis.datacollector.metrics.util.physicalactivity.RecognizedActivity;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
 public class PhysicalActivity extends Metric {
-
     private BroadcastReceiver broadcastReceiver;
     private int delayMilis;
+    private int type;
+    private int confidence;
 
     public PhysicalActivity(Context context, Object... params) {
         super(context, params);
@@ -53,20 +57,28 @@ public class PhysicalActivity extends Metric {
         setRunning(false);
     }
 
+    public String getActivity() {
+        return RecognizedActivity.toString(type);
+    }
+
+    public int getConfidence() {
+        return confidence;
+    }
+
+    @Override
+    public void save(LocalDateTime dateTime, Object... params) {
+        super.save(dateTime, params);
+        Query.saveMetric(this);
+    }
+
     private void initBroadcastreceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("activity_intent")) {
-                    int type = intent.getIntExtra("type", -1);
-                    int confidence = intent.getIntExtra("confidence", 0);
-
-                    Log.w("PhysicalActivity", "User activity: " + type +
-                            ", Confidence: " + confidence);
-                    Toast.makeText(getContext(), "User activity: " +
-                                    RecognizedActivity.toString(type) + ", Confidence: " + confidence,
-                            Toast.LENGTH_SHORT)
-                            .show();
+                if ("activity_intent".equals(intent.getAction())) {
+                    type = intent.getIntExtra("type", -1);
+                    confidence = intent.getIntExtra("confidence", 0);
+                    save(LocalDateTime.now());
                 }
             }
         };

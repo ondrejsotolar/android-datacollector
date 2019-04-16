@@ -1,4 +1,4 @@
-package cz.muni.irtis.datacollector.metrics.util;
+package cz.muni.irtis.datacollector.metrics.util.screenshot;
 
 import android.content.Context;
 import android.media.MediaScannerConnection;
@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.Random;
 
-public class ScreenshotSaver {
+class ScreenshotSaver {
     private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
             .appendPattern("yyyyMMddHHmmss")
             .appendValue(ChronoField.MILLI_OF_SECOND, 3)
@@ -25,7 +25,7 @@ public class ScreenshotSaver {
      * @param context context
      * @return absolute path to file
      */
-    public static String processImage(final byte[] png, final Context context) {
+    static String processImage(final byte[] png, final Context context) {
         String fileName = LocalDateTime.now().format(formatter) + ".png";
         File output = new File(context.getExternalFilesDir(null), fileName);
         try {

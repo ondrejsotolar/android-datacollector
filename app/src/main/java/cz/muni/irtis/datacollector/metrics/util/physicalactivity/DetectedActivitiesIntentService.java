@@ -3,12 +3,16 @@ package cz.muni.irtis.datacollector.metrics.util.physicalactivity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
-public class DetectedActivitiesIntentService  extends IntentService {
-
+/**
+ * Used as pending intent for ActivityRecognitionClient listener.
+ * Results are sent back with a local broadcast.
+ */
+public class DetectedActivitiesIntentService extends IntentService {
     private static final String TAG = DetectedActivitiesIntentService.class.getSimpleName();
 
     public DetectedActivitiesIntentService() {
@@ -32,6 +36,10 @@ public class DetectedActivitiesIntentService  extends IntentService {
         broadcastActivity(activity);
     }
 
+    /**
+     * Send local broadcast with result.
+     * @param activity
+     */
     private void broadcastActivity(DetectedActivity activity) {
         Intent intent = new Intent("activity_intent");
         intent.putExtra("type", activity.getType());

@@ -1,4 +1,4 @@
-package cz.muni.irtis.datacollector.metrics.util;
+package cz.muni.irtis.datacollector.metrics.util.screenshot;
 
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;

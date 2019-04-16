@@ -15,6 +15,8 @@ import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 
 public class SchedulerService extends Service {
+    private static final String TAG = SchedulerService.class.getSimpleName();
+
     public static final String EXTRA_RESULT_CODE = "resultCode";
     public static final String EXTRA_RESULT_INTENT = "resultIntent";
     public static boolean IS_RUNNING = false;
@@ -42,7 +44,7 @@ public class SchedulerService extends Service {
             IS_RUNNING = true;
         }
         else {
-            Log.d("SchedulerService: ", "Already running.");
+            Log.d(TAG, "Already running.");
         }
     }
 
@@ -51,7 +53,7 @@ public class SchedulerService extends Service {
             context.stopService(serviceName);
         }
         else {
-            Log.d("SchedulerService: ", "Trying to stop not running service.");
+            Log.d(TAG, "Trying to stop not running service.");
         }
     }
 
@@ -81,13 +83,14 @@ public class SchedulerService extends Service {
         taskScheduler.onDestroy();
         IS_RUNNING = false;
         stopForeground(false);
+        Log.w(TAG, "service exiting.");
         super.onDestroy();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d("SchedulerService", "onBind()");
+        Log.d(TAG, "onBind()");
         throw new IllegalStateException("Non-bindable service");
     }
 

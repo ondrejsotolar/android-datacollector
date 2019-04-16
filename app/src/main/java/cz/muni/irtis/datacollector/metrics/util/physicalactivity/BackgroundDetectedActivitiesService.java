@@ -13,12 +13,15 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+/**
+ * Register listeners to ActivityRecognitionClient with intent service.
+ */
 public class BackgroundDetectedActivitiesService extends Service {
     private static final String TAG = BackgroundDetectedActivitiesService.class.getSimpleName();
 
-    private Intent mIntentService;
-    private PendingIntent mPendingIntent;
-    private ActivityRecognitionClient mActivityRecognitionClient;
+    private Intent intentService;
+    private PendingIntent pendingIntent;
+    private ActivityRecognitionClient activityRecognitionClient;
     private int delayMilis;
 
     public BackgroundDetectedActivitiesService() {
@@ -28,9 +31,10 @@ public class BackgroundDetectedActivitiesService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mActivityRecognitionClient = new ActivityRecognitionClient(this);
-        mIntentService = new Intent(this, DetectedActivitiesIntentService.class);
-        mPendingIntent = PendingIntent.getService(this, 1, mIntentService, PendingIntent.FLAG_UPDATE_CURRENT);
+        activityRecognitionClient = new ActivityRecognitionClient(this);
+        intentService = new Intent(this, DetectedActivitiesIntentService.class);
+        pendingIntent = PendingIntent
+                .getService(this, 1, intentService, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Nullable
@@ -45,13 +49,20 @@ public class BackgroundDetectedActivitiesService extends Service {
         super.onStartCommand(intent, flags, startId);
 
         delayMilis = intent.getIntExtra("delayMilis", -1);
+        if (delayMilis < 0) {
+            throw new IllegalStateException("Delay is less than 0!");
+        }
+
         requestActivityUpdates();
         return START_STICKY;
     }
 
+    /**
+     * Start listening to activity changes
+     */
     public void requestActivityUpdates() {
-        Task<Void> task = mActivityRecognitionClient
-                .requestActivityUpdates(delayMilis, mPendingIntent);
+        Task<Void> task = activityRecognitionClient
+                .requestActivityUpdates(delayMilis, pendingIntent);
 
         task.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -67,9 +78,12 @@ public class BackgroundDetectedActivitiesService extends Service {
         });
     }
 
+    /**
+     * Stop listening to activity changes
+     */
     public void removeActivityUpdates() {
-        Task<Void> task = mActivityRecognitionClient.removeActivityUpdates(
-                mPendingIntent);
+        Task<Void> task = activityRecognitionClient.removeActivityUpdates(
+                pendingIntent);
 
         task.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -88,6 +102,7 @@ public class BackgroundDetectedActivitiesService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.w(TAG, "service exiting.");
         removeActivityUpdates();
     }
 }

@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.Location;
+import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 
 public class Query {
@@ -66,6 +67,23 @@ public class Query {
     }
 
     /**
+     * Save Location metric to database.
+     * @param metric Location
+     * @return
+     */
+    public static long saveMetric(PhysicalActivity metric) {
+        long dateTimeId = saveNewTimeEntry(metric.getDateTime());
+
+        ContentValues cv = new ContentValues();
+        cv.put(Const.COLUMN_DATETIME_ID, dateTimeId);
+        cv.put(Const.COLUMN_ACTIVITY, metric.getActivity());
+        cv.put(Const.COLUMN_CONFIDENCE, metric.getConfidence());
+
+        long result = db.getWritableDatabase().insert(Const.TABLE_ACTIVITY_RECOGNITION, null, cv);
+        return result;
+    }
+
+    /**
      * For testing only
      */
     private static void logCount() {
@@ -73,8 +91,9 @@ public class Query {
         long bCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_BATTERY_STATE);
         long sCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_SCREENSHOTS);
         long lCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_GPS_LOCATION);
+        long aCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_ACTIVITY_RECOGNITION);
 
-        Log.d("DB Record count: ", dCount + "," + bCount+ "," + sCount+ "," + lCount);
+        Log.d("DB Record count: ", dCount + "," + bCount+ "," + sCount+ "," + lCount + "," + aCount);
     }
 
     private static long saveNewTimeEntry(LocalDateTime dateTime) {
