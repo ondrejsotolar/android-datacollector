@@ -13,6 +13,7 @@ import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
+import cz.muni.irtis.datacollector.metrics.Wifi;
 
 public class SchedulerService extends Service {
     private static final String TAG = SchedulerService.class.getSimpleName();
@@ -104,5 +105,7 @@ public class SchedulerService extends Service {
         taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0));
 
         taskScheduler.addMetric(new PhysicalActivity(getApplicationContext(), testDelay));
+
+        taskScheduler.addMetric(new Wifi(getApplicationContext()));
     }
 }

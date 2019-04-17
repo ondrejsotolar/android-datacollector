@@ -8,7 +8,6 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import android.view.WindowManager;
 
 import java.time.LocalDateTime;
@@ -74,7 +73,7 @@ public class Screenshot extends Metric {
      */
     @Override
     public void run() {
-        if (!isConditionsSatisfied())
+        if (!isPrerequisitiesSatisfied())
             return;
 
         projection = mediaProjectionManager.getMediaProjection(resultCode, resultData);
@@ -130,14 +129,4 @@ public class Screenshot extends Metric {
     public WindowManager getWindowManager() {
         return windowManager;
     }
-
-    private boolean isConditionsSatisfied() {
-        if (!getPrerequisity(IsScreenOn.class).check(getContext())) {
-            Log.d(getClass().getSimpleName() + " metric:","Screen is off - no screenshots will be taken.");
-            return false;
-        }
-        return true;
-    }
-
-
 }

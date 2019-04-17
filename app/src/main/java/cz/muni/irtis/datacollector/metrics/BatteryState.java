@@ -17,7 +17,6 @@ public class BatteryState extends Metric {
 
     public BatteryState(Context context, Object... params) {
         super(context, params);
-        addPrerequisity(new IsScreenOn());
     }
 
     /**
@@ -25,9 +24,6 @@ public class BatteryState extends Metric {
      */
     @Override
     public void run() {
-        if (!isConditionsSatisfied())
-            return;
-
         BatteryManager bm = (BatteryManager) getContext().getSystemService(BATTERY_SERVICE);
         currentLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
         save(LocalDateTime.now());
@@ -44,13 +40,5 @@ public class BatteryState extends Metric {
 
     public int getLevel() {
         return currentLevel;
-    }
-
-    private boolean isConditionsSatisfied() {
-        if (!getPrerequisity(IsScreenOn.class).check(getContext())) {
-            Log.d(getClass().getSimpleName() + " metric:","Screen is off - battery state will not checked.");
-            return false;
-        }
-        return true;
     }
 }
