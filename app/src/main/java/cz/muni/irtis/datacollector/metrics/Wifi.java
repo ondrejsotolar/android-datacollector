@@ -73,7 +73,8 @@ public class Wifi extends Metric {
                         ssidList.add(scanResults.get(i).SSID);
                     }
                 }
-                connectedSsid = wifiManager.getConnectionInfo().getSSID();
+                // TODO: UTF8 has double quot marks. recognize or remove.
+                connectedSsid = wifiManager.getConnectionInfo().getSSID().replace("\"", "");
                 save(LocalDateTime.now());
             }
         }

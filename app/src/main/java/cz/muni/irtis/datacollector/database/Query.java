@@ -7,6 +7,8 @@ import android.util.Log;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.Location;
@@ -108,6 +110,13 @@ public class Query {
         // save connected wifi
         long connectedId = getWifiSsid(metric.getConnectedSsid());
         if (connectedId <= 0) {
+            // TODO: remove. for debugging only.
+            List<String> names = getSavedWifis();
+            String out = "";
+            for (String s : names) {
+                out += s + ",";
+            }
+            Log.d(TAG, out);
             throw new IllegalStateException(TAG + ": connected wifi not yet saved to DB!");
         }
         saveConnectedWifi(dateTimeId, connectedId);
@@ -144,9 +153,9 @@ public class Query {
         String query =
                 "SELECT "+ Const.ID +
                 " FROM "+ Const.TABLE_WIFI_SSID +
-                        " WHERE "+ Const.COLUMN_SSID +" = '" + ssid + "'";
+                        " WHERE "+ Const.COLUMN_SSID + " = ?";
 
-        Cursor result = db.getReadableDatabase().rawQuery(query, null);
+        Cursor result = db.getReadableDatabase().rawQuery(query, new String[]{ssid});
         long id = -1;
         if (result.moveToFirst()) {
             id = result.getLong(0);
@@ -154,6 +163,23 @@ public class Query {
         result.close();
 
         return id;
+    }
+
+    private static List<String> getSavedWifis() {
+        String query =
+                "SELECT "+ Const.COLUMN_SSID +
+                        " FROM "+ Const.TABLE_WIFI_SSID;
+
+        Cursor result = db.getReadableDatabase().rawQuery(query, null);
+        List<String> names = new ArrayList<>();
+        if (result.moveToFirst()){
+            do {
+                names.add(result.getString(0));
+            } while(result.moveToNext());
+        }
+        result.close();
+
+        return names;
     }
 
     private static long saveNewWifiSsid(String ssid) {
