@@ -23,4 +23,12 @@ class Const {
     static final String TABLE_ACTIVITY_RECOGNITION = "activity_recognition";
     static final String COLUMN_ACTIVITY = "activity";
     static final String COLUMN_CONFIDENCE = "confidence";
+
+    static final String TABLE_WIFI_SSID = "wifi_ssid";
+    static final String COLUMN_SSID = "ssid";
+
+    static final String TABLE_AVAILABLE_WIFI = "available_wifi";
+    static final String COLUMN_WIFI_SSID_ID = "wifi_ssid_id";
+
+    static final String TABLE_CONNECTED_WIFI = "connected_wifi";
 }

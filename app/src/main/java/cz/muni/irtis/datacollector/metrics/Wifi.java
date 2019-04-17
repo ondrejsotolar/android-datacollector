@@ -7,9 +7,11 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.condition.IsWifiOn;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
@@ -22,6 +24,7 @@ public class Wifi extends Metric {
     private WifiManager wifiManager;
     private WifiScanReceiver wifiScanReceiver;
     private List<String> ssidList;
+    private String connectedSsid;
 
     public Wifi(Context context, Object... params) {
         super(context, params);
@@ -41,8 +44,18 @@ public class Wifi extends Metric {
         setRunning(true);
     }
 
+    @Override
+    public void save(LocalDateTime dateTime, Object... params) {
+        super.save(dateTime, params);
+        Query.saveMetric(this);
+    }
+
     public List<String> getSsidList() {
         return ssidList;
+    }
+
+    public String getConnectedSsid() {
+        return connectedSsid;
     }
 
     /**
@@ -60,6 +73,8 @@ public class Wifi extends Metric {
                         ssidList.add(scanResults.get(i).SSID);
                     }
                 }
+                connectedSsid = wifiManager.getConnectionInfo().getSSID();
+                save(LocalDateTime.now());
             }
         }
     }

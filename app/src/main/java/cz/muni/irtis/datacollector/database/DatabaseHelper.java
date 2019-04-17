@@ -42,11 +42,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Datetime
         db.execSQL("CREATE TABLE " +
                 Const.TABLE_DATETIME + "(" +
                 Const.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 Const.COLUMN_TIME_STAMP + " DATETIME);"
         );
+        // Battery state
         db.execSQL("CREATE TABLE " +
                 Const.TABLE_BATTERY_STATE + "( " +
                 Const.COLUMN_STATE_PERCENT + " INTEGER, " +
@@ -54,6 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
+        // Screenshots
         db.execSQL("CREATE TABLE " +
                 Const.TABLE_SCREENSHOTS + "( " +
                 Const.COLUMN_URL + " TEXT, " +
@@ -61,6 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
+        // GPS location
         db.execSQL("CREATE TABLE " +
                 Const.TABLE_GPS_LOCATION + "( " +
                 Const.COLUMN_LATITUDE + " REAL, " +
@@ -69,6 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
+        // Activity recognition
         db.execSQL("CREATE TABLE " +
                 Const.TABLE_ACTIVITY_RECOGNITION + "( " +
                 Const.COLUMN_ACTIVITY + " TEXT, " +
@@ -76,6 +81,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Const.COLUMN_DATETIME_ID + " INTEGER, " +
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
+        );
+        // Wifi
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_WIFI_SSID + "(" +
+                Const.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                Const.COLUMN_SSID + " TEXT);"
+        );
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_AVAILABLE_WIFI + "( " +
+                Const.COLUMN_DATETIME_ID + " INTEGER, " +
+                Const.COLUMN_WIFI_SSID_ID + " INTEGER, " +
+                "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + ")," +
+                "FOREIGN KEY (" + Const.COLUMN_WIFI_SSID_ID + ") " +
+                "REFERENCES " + Const.TABLE_WIFI_SSID + "(" + Const.ID + "));"
+        );
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_CONNECTED_WIFI + "( " +
+                Const.COLUMN_DATETIME_ID + " INTEGER, " +
+                Const.COLUMN_WIFI_SSID_ID + " INTEGER, " +
+                "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + ")," +
+                "FOREIGN KEY (" + Const.COLUMN_WIFI_SSID_ID + ") " +
+                "REFERENCES " + Const.TABLE_WIFI_SSID + "(" + Const.ID + "));"
         );
     }
 

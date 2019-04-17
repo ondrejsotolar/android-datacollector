@@ -1,6 +1,7 @@
 package cz.muni.irtis.datacollector.database;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.util.Log;
 
@@ -11,8 +12,11 @@ import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
+import cz.muni.irtis.datacollector.metrics.Wifi;
 
 public class Query {
+    private static final String TAG = Query.class.getSimpleName();
+
     private static DatabaseHelper db = DatabaseHelper.getInstance();
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -84,6 +88,34 @@ public class Query {
     }
 
     /**
+     * Save Wifi metric to database: new, available & connected
+     *
+     * @param metric Wifi
+     * @return 0 (nothing to return)
+     */
+    public static long saveMetric(Wifi metric) {
+        long dateTimeId = saveNewTimeEntry(metric.getDateTime());
+
+        // save new & available networks
+        for (int i = 0; i < metric.getSsidList().size(); i++) {
+            long ssidId = getWifiSsid(metric.getSsidList().get(i));
+            if (ssidId <= 0) {
+                ssidId = saveNewWifiSsid(metric.getSsidList().get(i));
+            }
+            saveAvailableWifi(dateTimeId, ssidId);
+        }
+
+        // save connected wifi
+        long connectedId = getWifiSsid(metric.getConnectedSsid());
+        if (connectedId <= 0) {
+            throw new IllegalStateException(TAG + ": connected wifi not yet saved to DB!");
+        }
+        saveConnectedWifi(dateTimeId, connectedId);
+
+        return 0;
+    }
+
+    /**
      * For testing only
      */
     private static void logCount() {
@@ -92,8 +124,12 @@ public class Query {
         long sCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_SCREENSHOTS);
         long lCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_GPS_LOCATION);
         long aCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_ACTIVITY_RECOGNITION);
+        long wCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_WIFI_SSID);
+        long vCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_AVAILABLE_WIFI);
+        long cCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_CONNECTED_WIFI);
 
-        Log.d("DB Record count: ", dCount + "," + bCount+ "," + sCount+ "," + lCount + "," + aCount);
+        Log.d(TAG, dCount + "," + bCount+ "," + sCount+ "," + lCount + "," + aCount
+                + "," + wCount + "," + vCount + "," + cCount);
     }
 
     private static long saveNewTimeEntry(LocalDateTime dateTime) {
@@ -102,5 +138,45 @@ public class Query {
 
         long result = db.getWritableDatabase().insert(Const.TABLE_DATETIME, null, cv);
         return result;
+    }
+
+    private static long getWifiSsid(String ssid) {
+        String query =
+                "SELECT "+ Const.ID +
+                " FROM "+ Const.TABLE_WIFI_SSID +
+                        " WHERE "+ Const.COLUMN_SSID +" = '" + ssid + "'";
+
+        Cursor result = db.getReadableDatabase().rawQuery(query, null);
+        long id = -1;
+        if (result.moveToFirst()) {
+            id = result.getLong(0);
+        }
+        result.close();
+
+        return id;
+    }
+
+    private static long saveNewWifiSsid(String ssid) {
+        ContentValues cv = new ContentValues();
+        cv.put(Const.COLUMN_SSID, ssid);
+
+        long result = db.getWritableDatabase().insert(Const.TABLE_WIFI_SSID, null, cv);
+        return result;
+    }
+
+    private static void saveAvailableWifi(long datatimeId,  long ssidId) {
+        ContentValues cv = new ContentValues();
+        cv.put(Const.COLUMN_DATETIME_ID, datatimeId);
+        cv.put(Const.COLUMN_WIFI_SSID_ID, ssidId);
+
+        db.getWritableDatabase().insert(Const.TABLE_AVAILABLE_WIFI, null, cv);
+    }
+
+    private static void saveConnectedWifi(long datatimeId, long ssidId) {
+        ContentValues cv = new ContentValues();
+        cv.put(Const.COLUMN_DATETIME_ID, datatimeId);
+        cv.put(Const.COLUMN_WIFI_SSID_ID, ssidId);
+
+        db.getWritableDatabase().insert(Const.TABLE_CONNECTED_WIFI, null, cv);
     }
 }
