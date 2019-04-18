@@ -110,35 +110,12 @@ public class Query {
         // save connected wifi
         long connectedId = getWifiSsid(metric.getConnectedSsid());
         if (connectedId <= 0) {
-            // TODO: remove. for debugging only.
-            List<String> names = getSavedWifis();
-            String out = "";
-            for (String s : names) {
-                out += s + ",";
-            }
-            Log.d(TAG, out);
+            outputWifis();
             throw new IllegalStateException(TAG + ": connected wifi not yet saved to DB!");
         }
         saveConnectedWifi(dateTimeId, connectedId);
-
+        outputWifis(); // TODO: remove. for debugging only.
         return 0;
-    }
-
-    /**
-     * For testing only
-     */
-    private static void logCount() {
-        long dCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_DATETIME);
-        long bCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_BATTERY_STATE);
-        long sCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_SCREENSHOTS);
-        long lCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_GPS_LOCATION);
-        long aCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_ACTIVITY_RECOGNITION);
-        long wCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_WIFI_SSID);
-        long vCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_AVAILABLE_WIFI);
-        long cCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_CONNECTED_WIFI);
-
-        Log.d(TAG, dCount + "," + bCount+ "," + sCount+ "," + lCount + "," + aCount
-                + "," + wCount + "," + vCount + "," + cCount);
     }
 
     private static long saveNewTimeEntry(LocalDateTime dateTime) {
@@ -150,27 +127,17 @@ public class Query {
     }
 
     private static long getWifiSsid(String ssid) {
-        String query =
-                "SELECT "+ Const.ID +
-                " FROM "+ Const.TABLE_WIFI_SSID +
-                        " WHERE "+ Const.COLUMN_SSID + " = ?";
-
-        Cursor result = db.getReadableDatabase().rawQuery(query, new String[]{ssid});
+        Cursor result = db.getReadableDatabase().rawQuery(SQL.SELECT_WIFI_SSID, new String[]{ssid});
         long id = -1;
         if (result.moveToFirst()) {
             id = result.getLong(0);
         }
         result.close();
-
         return id;
     }
 
     private static List<String> getSavedWifis() {
-        String query =
-                "SELECT "+ Const.COLUMN_SSID +
-                        " FROM "+ Const.TABLE_WIFI_SSID;
-
-        Cursor result = db.getReadableDatabase().rawQuery(query, null);
+        Cursor result = db.getReadableDatabase().rawQuery(SQL.SELECT_ALL_WIFI_SSID, null);
         List<String> names = new ArrayList<>();
         if (result.moveToFirst()){
             do {
@@ -178,7 +145,6 @@ public class Query {
             } while(result.moveToNext());
         }
         result.close();
-
         return names;
     }
 
@@ -204,5 +170,31 @@ public class Query {
         cv.put(Const.COLUMN_WIFI_SSID_ID, ssidId);
 
         db.getWritableDatabase().insert(Const.TABLE_CONNECTED_WIFI, null, cv);
+    }
+
+    /**
+     * For testing only
+     */
+    private static void logCount() {
+        long dCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_DATETIME);
+        long bCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_BATTERY_STATE);
+        long sCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_SCREENSHOTS);
+        long lCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_GPS_LOCATION);
+        long aCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_ACTIVITY_RECOGNITION);
+        long wCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_WIFI_SSID);
+        long vCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_AVAILABLE_WIFI);
+        long cCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_CONNECTED_WIFI);
+
+        Log.d(TAG, dCount + "," + bCount+ "," + sCount+ "," + lCount + "," + aCount
+                + "," + wCount + "," + vCount + "," + cCount);
+    }
+
+    private static void outputWifis() {
+        List<String> names = getSavedWifis();
+        String out = "";
+        for (String s : names) {
+            out += s + ",";
+        }
+        Log.d(TAG, out);
     }
 }

@@ -1,10 +1,15 @@
 package cz.muni.irtis.datacollector;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.support.v4.content.LocalBroadcastManager;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
@@ -15,6 +20,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class MainActivity extends PermissionAppCompatActivity {
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
     private MediaProjectionManager projectionMgr;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -51,8 +57,19 @@ public class MainActivity extends PermissionAppCompatActivity {
         setContentView(R.layout.activity_main);
         initButtons();
         DatabaseHelper.getInstance(this);
+
+        initBroadcastreceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
+                new IntentFilter("elapsed_time"));
+
+        Switch onOf = findViewById(R.id.toggle_onof);
         if (!SchedulerService.IS_RUNNING) {
+            setOffWithText();
             createScreenCaptureIntent();
+        } else {
+            if (!onOf.isChecked()) {
+                setOnWithText();
+            }
         }
     }
 
@@ -67,26 +84,37 @@ public class MainActivity extends PermissionAppCompatActivity {
                         .putExtra(SchedulerService.EXTRA_RESULT_CODE, resultCode)
                         .putExtra(SchedulerService.EXTRA_RESULT_INTENT, data);
                 SchedulerService.startRunning(this, i);
+                setOnWithText();
+            }
+            else {
+                setOffWithText();
             }
         }
     }
 
     private void initButtons() {
-        Button start = findViewById(R.id.startButton);
-        start.setOnClickListener(new View.OnClickListener() {
+        final Switch onOf = findViewById(R.id.toggle_onof);
+        onOf.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                restartTakingMetrics();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    restartTakingMetrics();
+                } else {
+                    stopTakingMetrics();
+                }
             }
         });
+    }
 
-        Button stop = findViewById(R.id.stopButton);
-        stop.setOnClickListener(new View.OnClickListener() {
+    private void initBroadcastreceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
-            public void onClick(View v) {
-                stopTakingMetrics();
+            public void onReceive(Context context, Intent intent) {
+                if ("elapsed_time".equals(intent.getAction())) {
+                    updateElapsedTime(intent.getStringExtra("elapsed"));
+                }
             }
-        });
+        };
     }
 
     /**
@@ -101,20 +129,41 @@ public class MainActivity extends PermissionAppCompatActivity {
         if (SchedulerService.IS_RUNNING) {
             Intent stopIntent = new Intent(this, SchedulerService.class);
             SchedulerService.stopRunning(this, stopIntent);
-            Toast.makeText(this, getString(R.string.metrics_taking_stopped), Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            Toast.makeText(this, getString(R.string.no_metrics_are_running), Toast.LENGTH_SHORT)
-                    .show();
+            setTextToOff();
+            clearElapsedTime();
         }
     }
 
     private void restartTakingMetrics() {
         if (!SchedulerService.IS_RUNNING) {
             createScreenCaptureIntent();
-        } else {
-            Toast.makeText(this, getString(R.string.already_running), Toast.LENGTH_SHORT)
-                    .show();
         }
+    }
+
+    private void setOnWithText() {
+        Switch onOf = findViewById(R.id.toggle_onof);
+        onOf.setChecked(true);
+        onOf.setText(R.string.stopButton_text);
+    }
+
+    private void setOffWithText() {
+        Switch onOf = findViewById(R.id.toggle_onof);
+        onOf.setChecked(false);
+        onOf.setText(R.string.startButton_text);
+    }
+
+    private void setTextToOff() {
+        Switch onOf = findViewById(R.id.toggle_onof);
+        onOf.setText(R.string.startButton_text);
+    }
+
+    private void updateElapsedTime(String elapsed) {
+        TextView elapsedText = findViewById(R.id.runningTimeValue);
+        elapsedText.setText(elapsed);
+    }
+
+    private void clearElapsedTime() {
+        TextView elapsedText = findViewById(R.id.runningTimeValue);
+        elapsedText.setText("");
     }
 }
