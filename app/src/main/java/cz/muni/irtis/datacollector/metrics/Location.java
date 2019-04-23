@@ -1,32 +1,56 @@
 package cz.muni.irtis.datacollector.metrics;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 import java.time.LocalDateTime;
 
 import cz.muni.irtis.datacollector.database.Query;
+import cz.muni.irtis.datacollector.metrics.condition.IsLocationOn;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
-import static android.content.Context.LOCATION_SERVICE;
+public class Location extends Metric {
 
-public class Location extends Metric implements LocationListener{
+    private FusedLocationProviderClient fusedLocationClient;
+    LocationCallback locationCallback;
 
-    LocationManager locationManager;
-
-    private double roundedLat;
-    private double roundedLon;
     private int minTimeMilis;
     private int minDistance;
+    double roundedLat;
+    double roundedLon;
 
     public Location(Context context, Object... params) {
         super(context, params);
-        locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+
+        addPrerequisity(new IsLocationOn());
+
         minTimeMilis = (int) params[0];
         minDistance = (int) params[1];
+
+        initLocationCallback(context);
+    }
+
+    @SuppressLint("MissingPermission")
+    private void initLocationCallback(Context context) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult != null) {
+                    for (android.location.Location location : locationResult.getLocations()) {
+                        if (location != null) {
+                            onLocationChanged(location);
+                        }
+                    }
+                }
+            }
+        };
     }
 
     /**
@@ -36,11 +60,11 @@ public class Location extends Metric implements LocationListener{
     @SuppressWarnings({"MissingPermission"})
     public void run() {
         if (!isRunning()) {
-            locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    minTimeMilis,
-                    minDistance,
-                    this);
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setInterval(minTimeMilis);
+            locationRequest.setFastestInterval(minTimeMilis);
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback,
+                    getContext().getMainLooper());
             setRunning(true);
         }
     }
@@ -50,17 +74,8 @@ public class Location extends Metric implements LocationListener{
      */
     @Override
     public void stop() {
-        locationManager.removeUpdates(this);
+        fusedLocationClient.removeLocationUpdates(locationCallback);
         setRunning(false);
-    }
-
-    @Override
-    public void onLocationChanged(android.location.Location location) {
-        if (location != null) {
-            roundedLat = (double) Math.round(location.getLatitude() * 10000d) / 10000d;
-            roundedLon = (double) Math.round(location.getLongitude() * 10000d) / 10000d;
-            save(LocalDateTime.now());
-        }
     }
 
     @Override
@@ -77,10 +92,11 @@ public class Location extends Metric implements LocationListener{
         return roundedLon;
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-    @Override
-    public void onProviderEnabled(String provider) {}
-    @Override
-    public void onProviderDisabled(String provider) {}
+    private void onLocationChanged(android.location.Location location) {
+        roundedLat = (double) Math.round(location.getLatitude() * 10000d) / 10000d;
+        roundedLon = (double) Math.round(location.getLongitude() * 10000d) / 10000d;
+        save(LocalDateTime.now());
+    }
+
+
 }

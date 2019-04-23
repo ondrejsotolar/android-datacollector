@@ -95,25 +95,33 @@ public class Query {
      * @param metric Wifi
      * @return 0 (nothing to return)
      */
-    public static long saveMetric(Wifi metric) {
+    public static long saveMetric(Wifi metric, Object... params) {
         long dateTimeId = saveNewTimeEntry(metric.getDateTime());
 
+        List<String> available = (List<String>) params[0];
+        String connected = null;
+        if (params.length > 1) {
+            connected = (String) params[1];
+        }
+
         // save new & available networks
-        for (int i = 0; i < metric.getSsidList().size(); i++) {
-            long ssidId = getWifiSsid(metric.getSsidList().get(i));
+        for (int i = 0; i < available.size(); i++) {
+            long ssidId = getWifiSsid(available.get(i));
             if (ssidId <= 0) {
-                ssidId = saveNewWifiSsid(metric.getSsidList().get(i));
+                ssidId = saveNewWifiSsid(available.get(i));
             }
             saveAvailableWifi(dateTimeId, ssidId);
         }
 
         // save connected wifi
-        long connectedId = getWifiSsid(metric.getConnectedSsid());
-        if (connectedId <= 0) {
-            outputWifis();
-            throw new IllegalStateException(TAG + ": connected wifi not yet saved to DB!");
+        if (connected != null) {
+            long connectedId = getWifiSsid(connected);
+            if (connectedId <= 0) {
+                outputWifis();
+                throw new IllegalStateException(TAG + ": connected wifi not yet saved to DB!");
+            }
+            saveConnectedWifi(dateTimeId, connectedId);
         }
-        saveConnectedWifi(dateTimeId, connectedId);
         outputWifis(); // TODO: remove. for debugging only.
         return 0;
     }

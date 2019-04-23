@@ -59,6 +59,14 @@ public class Runtime extends Metric {
         int minutes = (int) (seconds / 60);
         int hours = (int) (minutes / 60);
 
-        return String.format("%d:%d:%d", hours % 59, minutes % 59, seconds % 59);
+        return String.format("%s:%s:%s",
+                longify(hours),
+                longify(minutes % 59),
+                longify(seconds % 59));
+    }
+
+    private String longify(int time) {
+        String t = String.valueOf(time);
+        return t.length() < 2 ? "0" + t : t;
     }
 }
