@@ -8,6 +8,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.time.LocalDateTime;
 
@@ -59,6 +60,9 @@ public class Location extends Metric {
     @Override
     @SuppressWarnings({"MissingPermission"})
     public void run() {
+        if (!isPrerequisitiesSatisfied()) {
+            return;
+        }
         if (!isRunning()) {
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(minTimeMilis);
