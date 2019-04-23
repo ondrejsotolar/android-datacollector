@@ -1,19 +1,8 @@
-package cz.muni.irtis.datacollector.metrics;
+package cz.muni.irtis.datacollector.metrics.report;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
 import cz.muni.irtis.datacollector.schedule.Metric;

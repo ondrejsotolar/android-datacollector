@@ -15,8 +15,8 @@ import android.widget.Toast;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_CONTACTS;
 
 public class MainActivity extends PermissionAppCompatActivity {
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
@@ -39,7 +39,8 @@ public class MainActivity extends PermissionAppCompatActivity {
     @Override
     protected String[] getDesiredDangerousPermissions() {
         return new String[] {
-                ACCESS_FINE_LOCATION
+                ACCESS_FINE_LOCATION,
+                READ_CONTACTS
         };
     }
 
