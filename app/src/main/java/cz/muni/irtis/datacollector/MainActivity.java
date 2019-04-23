@@ -15,7 +15,7 @@ import android.widget.Toast;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 
 public class MainActivity extends PermissionAppCompatActivity {
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
@@ -38,7 +38,7 @@ public class MainActivity extends PermissionAppCompatActivity {
     @Override
     protected String[] getDesiredDangerousPermissions() {
         return new String[] {
-                ACCESS_FINE_LOCATION
+                ACCESS_COARSE_LOCATION
         };
     }
 
@@ -129,7 +129,10 @@ public class MainActivity extends PermissionAppCompatActivity {
         if (SchedulerService.IS_RUNNING) {
             Intent stopIntent = new Intent(this, SchedulerService.class);
             SchedulerService.stopRunning(this, stopIntent);
+
             setTextToOff();
+            TextView elapsedText = findViewById(R.id.runningTimeText);
+            elapsedText.setText(getString(R.string.last_runtime));
             clearElapsedTime();
         }
     }
@@ -137,6 +140,9 @@ public class MainActivity extends PermissionAppCompatActivity {
     private void restartTakingMetrics() {
         if (!SchedulerService.IS_RUNNING) {
             createScreenCaptureIntent();
+
+            TextView elapsedText = findViewById(R.id.runningTimeText);
+            elapsedText.setText(R.string.runtime_info);
         }
     }
 

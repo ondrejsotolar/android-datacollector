@@ -23,7 +23,7 @@ public class SchedulerService extends Service {
     public static final String EXTRA_RESULT_INTENT = "resultIntent";
     public static boolean IS_RUNNING = false;
 
-    private int testDelay = 10*1000;
+    private int testDelay = 10 * 1000;
     private static final int CHANNEL_ID = 1337;
 
     private TaskScheduler taskScheduler;
@@ -97,18 +97,18 @@ public class SchedulerService extends Service {
     }
 
     private void initMetrics() {
-        taskScheduler.addMetric(new BatteryState(getApplicationContext()));
+        taskScheduler.addMetric(new BatteryState(getApplicationContext()), 10);
 
         int resultCode = screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
         Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
-        taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData));
+        taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData), 10);
 
-        taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0));
+        taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0), 10);
 
-        taskScheduler.addMetric(new PhysicalActivity(getApplicationContext(), testDelay));
+        taskScheduler.addMetric(new PhysicalActivity(getApplicationContext(), testDelay), 10);
 
-        taskScheduler.addMetric(new Wifi(getApplicationContext()));
+        taskScheduler.addMetric(new Wifi(getApplicationContext()), 10);
 
-        taskScheduler.addMetric(new Runtime(getApplicationContext()));
+        taskScheduler.addMetric(new Runtime(getApplicationContext()), 1);
     }
 }

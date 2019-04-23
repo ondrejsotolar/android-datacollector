@@ -12,4 +12,5 @@
     <string name="running_time">Running time:</string>
     <string name="db_size">Database size</string>
     <string name="runtime_info">App runtime</string>
+    <string name="last_runtime">Last runtime</string>
 </resources>

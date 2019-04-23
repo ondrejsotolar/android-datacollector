@@ -12,13 +12,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class TaskScheduler {
-    final Handler delayHandler;
-    final int delay10;
+    private static final String TAG = TaskScheduler.class.getSimpleName();
+
+    private final Handler delayHandler;
+    private final int delay1 = 1;
+    private final int delay10;
+    private List<Metric> every1Second;
     private List<Metric> every10Seconds;
 
     public TaskScheduler(int testDelay) {
         delay10 = testDelay;
         delayHandler = new Handler();
+        every1Second = new ArrayList<>();
         every10Seconds = new ArrayList<>();
     }
 
@@ -26,8 +31,13 @@ public class TaskScheduler {
      * Add a runnable metric.
      * @param metric
      */
-    public void addMetric(Metric metric) {
-        every10Seconds.add(metric);
+    public void addMetric(Metric metric, int interval) {
+        switch (interval) {
+            case 10: every10Seconds.add(metric); break;
+            case 1 : every1Second.add(metric); break;
+            default: throw new IllegalStateException(TAG + "Undefined interval: " + metric.getClass().getSimpleName());
+        }
+
     }
 
     /**
@@ -36,10 +46,16 @@ public class TaskScheduler {
     public void startCapturingPeriodicaly() {
         delayHandler.postDelayed(new Runnable() {
             public void run() {
-                startCapture();
+                startCapture10();
                 delayHandler.postDelayed(this, delay10);
             }
         }, delay10);
+        delayHandler.postDelayed(new Runnable() {
+            public void run() {
+                startCapture1();
+                delayHandler.postDelayed(this, delay1);
+            }
+        }, delay1);
     }
 
     /**
@@ -50,11 +66,20 @@ public class TaskScheduler {
         for (int i = 0; i < every10Seconds.size(); i++) {
             every10Seconds.get(i).stop();
         }
+        for (int i = 0; i < every1Second.size(); i++) {
+            every1Second.get(i).stop();
+        }
     }
 
-    private void startCapture() {
+    private void startCapture10() {
         for (int i = 0; i < every10Seconds.size(); i++) {
             every10Seconds.get(i).run();
+        }
+    }
+
+    private void startCapture1() {
+        for (int i = 0; i < every1Second.size(); i++) {
+            every1Second.get(i).run();
         }
     }
 
