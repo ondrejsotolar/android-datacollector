@@ -12,6 +12,9 @@ import cz.muni.irtis.datacollector.schedule.Metric;
 
 import static android.content.Context.BATTERY_SERVICE;
 
+/**
+ * Capture battery state
+ */
 public class BatteryState extends Metric {
     private int currentLevel = -1;
 

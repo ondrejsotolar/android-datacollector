@@ -1,5 +1,8 @@
 package cz.muni.irtis.datacollector.database;
 
+/**
+ * Database constants
+ */
 class Const {
     static final String DATABASE_NAME = "metrics.db";
     static final String TITLE = "title";
@@ -31,4 +34,11 @@ class Const {
     static final String COLUMN_WIFI_SSID_ID = "wifi_ssid_id";
 
     static final String TABLE_CONNECTED_WIFI = "connected_wifi";
+
+    static final String TABLE_CALL_HISTORY = "call_history";
+    static final String COLUMN_NAME = "name";
+    static final String COLUMN_PHONE_NUMBER = "phone_number";
+    static final String COLUMN_TYPE = "type";
+    static final String COLUMN_DURATION = "duration";
+    static final String COLUMN_CALL_DATE = "call_date";
 }

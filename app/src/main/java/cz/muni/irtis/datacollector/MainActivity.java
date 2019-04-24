@@ -16,6 +16,7 @@ import cz.muni.irtis.datacollector.database.DatabaseHelper;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.READ_CALL_LOG;
 import static android.Manifest.permission.READ_CONTACTS;
 
 public class MainActivity extends PermissionAppCompatActivity {
@@ -36,14 +37,23 @@ public class MainActivity extends PermissionAppCompatActivity {
         }
     }
 
+    /**
+     * All required dangerous permissions must be declared here in addition to manifest.
+     * Only dangerous permissions must be declared here. They will be asked for.
+     * @return list of required dangerous permissions
+     */
     @Override
     protected String[] getDesiredDangerousPermissions() {
         return new String[] {
                 ACCESS_FINE_LOCATION,
-                READ_CONTACTS
+                READ_CONTACTS,
+                READ_CALL_LOG
         };
     }
 
+    /**
+     * Used didn't grant required permissions. The app will close.
+     */
     @Override
     protected void onPermissionDenied() {
         Toast.makeText(this, getString(R.string.permissions_denied), Toast.LENGTH_LONG)

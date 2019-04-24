@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Manage database connection. Create tables.
+ */
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int SCHEMA = 1;
     private static DatabaseHelper singleton = null;
@@ -105,6 +108,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + ")," +
                 "FOREIGN KEY (" + Const.COLUMN_WIFI_SSID_ID + ") " +
                 "REFERENCES " + Const.TABLE_WIFI_SSID + "(" + Const.ID + "));"
+        );
+        // Call history
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_CALL_HISTORY + "( " +
+                Const.COLUMN_NAME + " TEXT, " +
+                Const.COLUMN_PHONE_NUMBER + " TEXT, " +
+                Const.COLUMN_TYPE + " TEXT, " +
+                Const.COLUMN_DURATION + " INTEGER, " +
+                Const.COLUMN_CALL_DATE + " INTEGER, " +
+                Const.COLUMN_DATETIME_ID + " INTEGER, " +
+                "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
     }
 

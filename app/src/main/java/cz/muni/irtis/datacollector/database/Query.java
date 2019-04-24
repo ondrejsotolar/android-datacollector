@@ -11,11 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
+import cz.muni.irtis.datacollector.metrics.CallHistory;
 import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 import cz.muni.irtis.datacollector.metrics.Wifi;
 
+/**
+ * Make queries to the local database
+ */
 public class Query {
     private static final String TAG = Query.class.getSimpleName();
 
@@ -126,6 +130,41 @@ public class Query {
         return 0;
     }
 
+    /**
+     * Save CallHistory metric to database.
+     * @param metric CallHistory
+     * @return
+     */
+    public static long saveMetric(CallHistory metric) {
+        long dateTimeId = saveNewTimeEntry(metric.getDateTime());
+
+        for (int i = 0; i < metric.getRecords().size(); i++) {
+            ContentValues cv = new ContentValues();
+            cv.put(Const.COLUMN_DATETIME_ID, dateTimeId);
+            cv.put(Const.COLUMN_NAME, metric.getRecords().get(i).getName());
+            cv.put(Const.COLUMN_PHONE_NUMBER, metric.getRecords().get(i).getPhone_number());
+            cv.put(Const.COLUMN_TYPE, metric.getRecords().get(i).getType());
+            cv.put(Const.COLUMN_DURATION, metric.getRecords().get(i).getDuration());
+            cv.put(Const.COLUMN_CALL_DATE, metric.getRecords().get(i).getCall_date());
+            db.getWritableDatabase().insert(Const.TABLE_CALL_HISTORY, null, cv);
+        }
+        return 0;
+    }
+
+    /**
+     * Get latest call date
+     * @return long (INTEGER) milliseconds since epoch
+     */
+    public static long getMaxCallDate() {
+        Cursor result = db.getReadableDatabase().rawQuery(SQL.SELECT_MAX_CALL_DATE, null);
+        long date = -1;
+        if (result.moveToFirst()) {
+            date = result.getLong(0);
+        }
+        result.close();
+        return date;
+    }
+
     private static long saveNewTimeEntry(LocalDateTime dateTime) {
         ContentValues cv = new ContentValues();
         cv.put(Const.COLUMN_TIME_STAMP, dateTime.format(formatter));
@@ -180,6 +219,8 @@ public class Query {
         db.getWritableDatabase().insert(Const.TABLE_CONNECTED_WIFI, null, cv);
     }
 
+
+
     /**
      * For testing only
      */
@@ -192,11 +233,15 @@ public class Query {
         long wCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_WIFI_SSID);
         long vCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_AVAILABLE_WIFI);
         long cCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_CONNECTED_WIFI);
+        long hCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_CALL_HISTORY);
 
         Log.d(TAG, dCount + "," + bCount+ "," + sCount+ "," + lCount + "," + aCount
-                + "," + wCount + "," + vCount + "," + cCount);
+                + "," + wCount + "," + vCount + "," + cCount + "," + hCount);
     }
 
+    /**
+     * For testing only
+     */
     private static void outputWifis() {
         List<String> names = getSavedWifis();
         String out = "";

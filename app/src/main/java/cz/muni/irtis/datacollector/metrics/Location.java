@@ -8,7 +8,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.time.LocalDateTime;
 
@@ -16,8 +15,10 @@ import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.condition.IsLocationOn;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
+/**
+ * Capture location
+ */
 public class Location extends Metric {
-
     private FusedLocationProviderClient fusedLocationClient;
     LocationCallback locationCallback;
 

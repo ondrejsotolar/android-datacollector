@@ -20,6 +20,9 @@ import cz.muni.irtis.datacollector.schedule.Metric;
 import static android.content.Context.MEDIA_PROJECTION_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
 
+/**
+ * Capture screenshots
+ */
 public class Screenshot extends Metric {
     private final int VIRT_DISPLAY_FLAGS =
             DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY |

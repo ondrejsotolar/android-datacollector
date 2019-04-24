@@ -13,6 +13,9 @@ import cz.muni.irtis.datacollector.metrics.util.physicalactivity.BackgroundDetec
 import cz.muni.irtis.datacollector.metrics.util.physicalactivity.RecognizedActivity;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
+/**
+ * Capture physical activity
+ */
 public class PhysicalActivity extends Metric {
     private BroadcastReceiver broadcastReceiver;
     private int delayMilis;
