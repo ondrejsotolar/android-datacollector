@@ -16,4 +16,8 @@ class SQL {
     static final String SELECT_MAX_CALL_DATE =
             "SELECT max("+ Const.COLUMN_CALL_DATE +
                     ") FROM "+ Const.TABLE_CALL_HISTORY;
+
+    static final String SELECT_MAX_MESSAGE_DATE =
+            "SELECT max("+ Const.COLUMN_MESSAGE_DATE +
+                    ") FROM "+ Const.TABLE_SMS_CONVERSATION;
 }

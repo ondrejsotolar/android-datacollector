@@ -121,6 +121,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
+        // SMS conversation
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_SMS_CONVERSATION + "( " +
+                Const.COLUMN_PHONE_NUMBER + " TEXT, " +
+                Const.COLUMN_TYPE + " TEXT, " +
+                Const.COLUMN_CONTENT + " TEXT, " +
+                Const.COLUMN_MESSAGE_DATE + " INTEGER, " +
+                Const.COLUMN_DATETIME_ID + " INTEGER, " +
+                "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
+        );
     }
 
     @Override

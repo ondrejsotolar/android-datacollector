@@ -35,11 +35,11 @@ public class CallHistory extends Metric {
                 records = new ArrayList<>();
                 while (c.moveToNext()) {
                     CallRecord r = new CallRecord();
-                    r.setPhone_number(c.getString(c.getColumnIndex(CallLog.Calls.NUMBER)));
+                    r.setPhoneNumber(c.getString(c.getColumnIndex(CallLog.Calls.NUMBER)));
                     r.setName(c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME)));
                     r.setDuration(c.getLong(c.getColumnIndex(CallLog.Calls.DURATION)));
                     r.setType(c.getInt(c.getColumnIndex(CallLog.Calls.TYPE)));
-                    r.setCall_date(c.getLong(c.getColumnIndex(CallLog.Calls.DATE)));
+                    r.setCallDate(c.getLong(c.getColumnIndex(CallLog.Calls.DATE)));
                     records.add(r);
                 }
                 save(LocalDateTime.now());

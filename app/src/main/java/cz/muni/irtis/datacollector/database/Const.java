@@ -41,4 +41,8 @@ class Const {
     static final String COLUMN_TYPE = "type";
     static final String COLUMN_DURATION = "duration";
     static final String COLUMN_CALL_DATE = "call_date";
+
+    static final String TABLE_SMS_CONVERSATION = "sms_conversation";
+    static final String COLUMN_CONTENT = "content";
+    static final String COLUMN_MESSAGE_DATE = "message_date";
 }

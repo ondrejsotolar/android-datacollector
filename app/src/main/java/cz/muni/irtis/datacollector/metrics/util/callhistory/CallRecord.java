@@ -8,10 +8,10 @@ import android.util.Log;
  */
 public class CallRecord {
     private String name;
-    private String phone_number;
+    private String phoneNumber;
     private String type;
     private long duration;
-    private long call_date;
+    private long callDate;
 
     public String getName() {
         return name;
@@ -21,12 +21,12 @@ public class CallRecord {
         this.name = name;
     }
 
-    public String getPhone_number() {
-        return phone_number;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getType() {
@@ -71,11 +71,11 @@ public class CallRecord {
         this.duration = duration;
     }
 
-    public long getCall_date() {
-        return call_date;
+    public long getCallDate() {
+        return callDate;
     }
 
-    public void setCall_date(long call_date) {
-        this.call_date = call_date;
+    public void setCallDate(long callDate) {
+        this.callDate = callDate;
     }
 }
