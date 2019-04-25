@@ -11,6 +11,7 @@ import android.util.Log;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.CallHistory;
+import cz.muni.irtis.datacollector.metrics.InstalledApplication;
 import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.SmsConversation;
@@ -114,6 +115,8 @@ public class SchedulerService extends Service {
         taskScheduler.addMetric(new CallHistory(getApplicationContext()), 10);
 
         taskScheduler.addMetric(new SmsConversation(getApplicationContext()), 10);
+
+        taskScheduler.addMetric(new InstalledApplication(getApplicationContext()), 10);
 
         taskScheduler.addMetric(new Runtime(getApplicationContext()), 1);
     }
