@@ -4,10 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
 
 import java.time.LocalDateTime;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.util.physicalactivity.BackgroundDetectedActivitiesService;
 import cz.muni.irtis.datacollector.metrics.util.physicalactivity.RecognizedActivity;

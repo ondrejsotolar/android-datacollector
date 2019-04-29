@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 

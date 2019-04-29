@@ -2,8 +2,8 @@ package cz.muni.irtis.datacollector.metrics.report;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
 import cz.muni.irtis.datacollector.schedule.Metric;
 

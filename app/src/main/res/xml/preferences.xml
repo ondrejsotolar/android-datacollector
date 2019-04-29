@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="Main settings">
+        <SwitchPreferenceCompat
+            app:key="notifications"
+            app:title="Capture metrics"
+            app:summary="OFF"
+            app:icon="@drawable/ic_settings_black_24dp"/>
+        <Preference
+            app:key="info"
+            app:title=""
+            app:summary="Capture metrics from device for scientific reasons. Don't turn off without a good reason!"
+            app:icon="@drawable/ic_info_outline_grey_16dp"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Statistics">
+        <Preference
+            app:key="feedback"
+            app:title="Running time"
+            app:summary="Last run: 00:00:00"
+            app:icon="@drawable/ic_hourglass_empty_grey_24dp"/>
+
+        <Preference
+            app:key="localStorage"
+            app:title="Local storage size"
+            app:summary="80 MB"
+            app:icon="@drawable/ic_storage_grey_24dp"/>
+
+        <Preference
+            app:key="lastSync"
+            app:title="Last Sync"
+            app:summary="1.1.2019"
+            app:icon="@drawable/ic_sync_grey_24dp"/>
+
+        <Preference
+            app:key="metricsTaken"
+            app:title="Metrics taken"
+            app:summary="Screenshot, Wifi, BatteryState..."
+            app:icon="@drawable/ic_multiline_chart_grey_24dp"/>
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>
