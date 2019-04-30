@@ -13,4 +13,11 @@
     <string name="db_size">Database size</string>
     <string name="runtime_info">App runtime</string>
     <string name="last_runtime">Last runtime</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+    <string name="captureMetrics">Capture metrics</string>
+    <string name="captureMetricsSummary">Capture metrics from device for scientific reasons. Don\'t turn off without a good reason!</string>
+    <string name="local_storage_size">Local storage size</string>
+    <string name="last_sync">Last Sync</string>
+    <string name="metrics_taken">Metrics taken</string>
 </resources>

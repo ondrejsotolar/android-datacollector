@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.Preference;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
@@ -20,7 +24,9 @@ import static android.Manifest.permission.READ_CALL_LOG;
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_SMS;
 
-public class MainActivity extends PermissionAppCompatActivity {
+public class MainActivity extends PermissionAppCompatActivity
+        implements Preference.OnPreferenceChangeListener {
+
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
     private MediaProjectionManager projectionMgr;
     private BroadcastReceiver broadcastReceiver;
@@ -70,22 +76,46 @@ public class MainActivity extends PermissionAppCompatActivity {
     @Override
     protected void onReady(Bundle state) {
         setContentView(R.layout.activity_main);
-        initButtons();
+        initFragment();
         DatabaseHelper.getInstance(this);
 
         initBroadcastreceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
                 new IntentFilter("elapsed_time"));
 
-        Switch onOf = findViewById(R.id.toggle_onof);
         if (!SchedulerService.IS_RUNNING) {
-            setOffWithText();
+            setOnOffSwitchValue(false);
             createScreenCaptureIntent();
-        } else {
-            if (!onOf.isChecked()) {
-                setOnWithText();
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (fragment instanceof RootScreenFragment) {
+            RootScreenFragment preferenceFragment = (RootScreenFragment) fragment;
+            preferenceFragment.setOnPreferenceChangeListener(this);
+        }
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if ("onOf".equals(preference.getKey())) {
+            Log.w("Preference " + preference.getKey(), newValue.toString());
+
+            boolean preferenceValue = (boolean) newValue;
+            if (preferenceValue) {
+                restartTakingMetrics();
+            } else {
+                stopTakingMetrics();
             }
         }
+        return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        setOnOffSwitchValue(SchedulerService.IS_RUNNING);
+        super.onDestroy();
     }
 
     /**
@@ -99,26 +129,23 @@ public class MainActivity extends PermissionAppCompatActivity {
                         .putExtra(SchedulerService.EXTRA_RESULT_CODE, resultCode)
                         .putExtra(SchedulerService.EXTRA_RESULT_INTENT, data);
                 SchedulerService.startRunning(this, i);
-                setOnWithText();
+                setOnOffSwitchValue(true);
             }
             else {
-                setOffWithText();
+                setOnOffSwitchValue(false);
             }
         }
     }
 
-    private void initButtons() {
-        final Switch onOf = findViewById(R.id.toggle_onof);
-        onOf.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    restartTakingMetrics();
-                } else {
-                    stopTakingMetrics();
-                }
-            }
-        });
+    private void initFragment() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
+        if (fragment == null) {
+            fragment = Fragment.instantiate(this, RootScreenFragment.class.getName());
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment, fragment);
+        transaction.commit();
+        setOnOffSwitchValue(SchedulerService.IS_RUNNING);
     }
 
     private void initBroadcastreceiver() {
@@ -145,46 +172,29 @@ public class MainActivity extends PermissionAppCompatActivity {
             Intent stopIntent = new Intent(this, SchedulerService.class);
             SchedulerService.stopRunning(this, stopIntent);
 
-            setTextToOff();
-            TextView elapsedText = findViewById(R.id.runningTimeText);
-            elapsedText.setText(getString(R.string.last_runtime));
-            clearElapsedTime();
+            setOnOffSwitchValue(false);
         }
     }
 
     private void restartTakingMetrics() {
         if (!SchedulerService.IS_RUNNING) {
             createScreenCaptureIntent();
-
-            TextView elapsedText = findViewById(R.id.runningTimeText);
-            elapsedText.setText(R.string.runtime_info);
         }
     }
 
-    private void setOnWithText() {
-        Switch onOf = findViewById(R.id.toggle_onof);
-        onOf.setChecked(true);
-        onOf.setText(R.string.stopButton_text);
-    }
-
-    private void setOffWithText() {
-        Switch onOf = findViewById(R.id.toggle_onof);
-        onOf.setChecked(false);
-        onOf.setText(R.string.startButton_text);
-    }
-
-    private void setTextToOff() {
-        Switch onOf = findViewById(R.id.toggle_onof);
-        onOf.setText(R.string.startButton_text);
+    private void setOnOffSwitchValue(boolean value) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
+        if (fragment instanceof RootScreenFragment) {
+            RootScreenFragment rootFragment = (RootScreenFragment) fragment;
+            rootFragment.setOnOfSwitchValue(value);
+        }
     }
 
     private void updateElapsedTime(String elapsed) {
-        TextView elapsedText = findViewById(R.id.runningTimeValue);
-        elapsedText.setText(elapsed);
-    }
-
-    private void clearElapsedTime() {
-        TextView elapsedText = findViewById(R.id.runningTimeValue);
-        elapsedText.setText("");
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
+        if (fragment instanceof RootScreenFragment) {
+            RootScreenFragment rootFragment = (RootScreenFragment) fragment;
+            rootFragment.setRuntime(elapsed);
+        }
     }
 }

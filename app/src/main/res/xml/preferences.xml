@@ -2,40 +2,40 @@
 <androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory app:title="Main settings">
         <SwitchPreferenceCompat
-            app:key="notifications"
-            app:title="Capture metrics"
-            app:summary="OFF"
+            app:key="onOf"
+            app:title="@string/captureMetrics"
+            app:summaryOn="@string/on"
+            app:summaryOff="@string/off"
             app:icon="@drawable/ic_settings_black_24dp"/>
         <Preference
             app:key="info"
             app:title=""
-            app:summary="Capture metrics from device for scientific reasons. Don't turn off without a good reason!"
+            app:summary="@string/captureMetricsSummary"
             app:icon="@drawable/ic_info_outline_grey_16dp"/>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="Statistics">
         <Preference
-            app:key="feedback"
-            app:title="Running time"
-            app:summary="Last run: 00:00:00"
+            app:key="runtime"
+            app:title="@string/running_time"
             app:icon="@drawable/ic_hourglass_empty_grey_24dp"/>
 
         <Preference
             app:key="localStorage"
-            app:title="Local storage size"
-            app:summary="80 MB"
+            app:title="@string/local_storage_size"
+            app:summary="TODO MB"
             app:icon="@drawable/ic_storage_grey_24dp"/>
 
         <Preference
             app:key="lastSync"
-            app:title="Last Sync"
-            app:summary="1.1.2019"
+            app:title="@string/last_sync"
+            app:summary="TODO date"
             app:icon="@drawable/ic_sync_grey_24dp"/>
 
         <Preference
             app:key="metricsTaken"
-            app:title="Metrics taken"
-            app:summary="Screenshot, Wifi, BatteryState..."
+            app:title="@string/metrics_taken"
+            app:summary="TODO: Screenshot, Wifi..."
             app:icon="@drawable/ic_multiline_chart_grey_24dp"/>
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>
