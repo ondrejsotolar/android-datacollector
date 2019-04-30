@@ -100,8 +100,6 @@ public class MainActivity extends PermissionAppCompatActivity
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if ("onOf".equals(preference.getKey())) {
-            Log.w("Preference " + preference.getKey(), newValue.toString());
-
             boolean preferenceValue = (boolean) newValue;
             if (preferenceValue) {
                 restartTakingMetrics();

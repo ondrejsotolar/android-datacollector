@@ -18,6 +18,7 @@
         <Preference
             app:key="runtime"
             app:title="@string/running_time"
+            app:summary="00:00:00"
             app:icon="@drawable/ic_hourglass_empty_grey_24dp"/>
 
         <Preference

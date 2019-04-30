@@ -6,8 +6,11 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.TwoStatePreference;
 
+/**
+ * Root screen of the UI
+ */
 public class RootScreenFragment extends PreferenceFragmentCompat {
-    Preference.OnPreferenceChangeListener listener;
+    private Preference.OnPreferenceChangeListener listener;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -17,11 +20,19 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
         onOf.setOnPreferenceChangeListener(listener);
     }
 
-    public void setOnPreferenceChangeListener(Preference.OnPreferenceChangeListener listener) {
+    /**
+     * Set preference changed listener. Must be called before onCreatePreferences.
+     * @param listener
+     */
+    void setOnPreferenceChangeListener(Preference.OnPreferenceChangeListener listener) {
         this.listener = listener;
     }
 
-    public void setOnOfSwitchValue(boolean value) {
+    /**
+     * Set ON/OFF switch value. Doesn't raise event.
+     * @param value
+     */
+    void setOnOfSwitchValue(boolean value) {
         Preference preference = findPreference("onOf");
         if (preference instanceof TwoStatePreference) {
             TwoStatePreference onOfSwitch = (TwoStatePreference) preference;
@@ -31,7 +42,7 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
         }
     }
 
-    public void setRuntime(String value) {
+    void setRuntime(String value) {
         Preference preference = findPreference("runtime");
         if (preference != null) {
             preference.setSummary(value);
