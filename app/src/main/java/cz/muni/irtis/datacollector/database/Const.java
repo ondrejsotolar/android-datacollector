@@ -4,7 +4,7 @@ package cz.muni.irtis.datacollector.database;
  * Database constants
  */
 class Const {
-    static final String DATABASE_NAME = "metrics.db";
+    static final String DATABASE_NAME = "datacollector.db";
     static final String TITLE = "title";
     static final String VALUE = "value";
     static final String ID = "id";

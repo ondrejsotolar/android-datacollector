@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Arrays;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -84,7 +82,7 @@ public class MainActivity extends PermissionAppCompatActivity
                 new IntentFilter("elapsed_time"));
 
         if (!SchedulerService.IS_RUNNING) {
-            setOnOffSwitchValue(false);
+            setOnOffState(false);
             createScreenCaptureIntent();
         }
     }
@@ -112,7 +110,7 @@ public class MainActivity extends PermissionAppCompatActivity
 
     @Override
     protected void onDestroy() {
-        setOnOffSwitchValue(SchedulerService.IS_RUNNING);
+        setOnOffState(SchedulerService.IS_RUNNING);
         super.onDestroy();
     }
 
@@ -127,10 +125,10 @@ public class MainActivity extends PermissionAppCompatActivity
                         .putExtra(SchedulerService.EXTRA_RESULT_CODE, resultCode)
                         .putExtra(SchedulerService.EXTRA_RESULT_INTENT, data);
                 SchedulerService.startRunning(this, i);
-                setOnOffSwitchValue(true);
+                setOnOffState(true);
             }
             else {
-                setOnOffSwitchValue(false);
+                setOnOffState(false);
             }
         }
     }
@@ -143,7 +141,7 @@ public class MainActivity extends PermissionAppCompatActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
-        setOnOffSwitchValue(SchedulerService.IS_RUNNING);
+        setOnOffState(SchedulerService.IS_RUNNING);
     }
 
     private void initBroadcastreceiver() {
@@ -170,7 +168,7 @@ public class MainActivity extends PermissionAppCompatActivity
             Intent stopIntent = new Intent(this, SchedulerService.class);
             SchedulerService.stopRunning(this, stopIntent);
 
-            setOnOffSwitchValue(false);
+            setOnOffState(false);
         }
     }
 
@@ -180,11 +178,15 @@ public class MainActivity extends PermissionAppCompatActivity
         }
     }
 
-    private void setOnOffSwitchValue(boolean value) {
+    private void setOnOffState(boolean value) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (fragment instanceof RootScreenFragment) {
             RootScreenFragment rootFragment = (RootScreenFragment) fragment;
             rootFragment.setOnOfSwitchValue(value);
+            rootFragment.setLocalFilesSize(this, DatabaseHelper.getInstance(this).getSize());
+            rootFragment.setCollectedMetrics(
+                    Arrays.asList("Screenshot", "Sms", "Wifi networks", "Location"));
+
         }
     }
 

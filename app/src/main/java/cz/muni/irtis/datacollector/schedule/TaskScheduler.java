@@ -71,6 +71,14 @@ public class TaskScheduler {
         }
     }
 
+    public List<String> get10sMetricNames() {
+        List<String> names = new ArrayList<>(every10Seconds.size());
+        for (int i = 0; i < every10Seconds.size(); i++) {
+            names.add(every10Seconds.get(i).getClass().getSimpleName());
+        }
+        return names;
+    }
+
     private void startCapture10() {
         for (int i = 0; i < every10Seconds.size(); i++) {
             every10Seconds.get(i).run();

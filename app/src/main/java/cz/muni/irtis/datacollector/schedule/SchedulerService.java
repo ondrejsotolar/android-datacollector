@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.CallHistory;
@@ -97,6 +99,10 @@ public class SchedulerService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind()");
         throw new IllegalStateException("Non-bindable service");
+    }
+
+    public List<String> getCollectedMetricNames() {
+        return taskScheduler.get10sMetricNames();
     }
 
     private void initMetrics() {

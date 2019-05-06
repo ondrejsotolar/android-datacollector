@@ -30,7 +30,7 @@
         <Preference
             app:key="lastSync"
             app:title="@string/last_sync"
-            app:summary="TODO date"
+            app:summary="never"
             app:icon="@drawable/ic_sync_grey_24dp"/>
 
         <Preference

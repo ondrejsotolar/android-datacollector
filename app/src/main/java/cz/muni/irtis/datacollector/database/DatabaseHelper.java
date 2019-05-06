@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.File;
+
 /**
  * Manage database connection. Create tables.
  */
@@ -13,7 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // In memory
     private DatabaseHelper(Context context) {
-        super(context, null /*Const.DATABASE_NAME*/, null, SCHEMA);
+        super(context, Const.DATABASE_NAME, null, SCHEMA);
     }
 
     /**
@@ -137,5 +139,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         throw new RuntimeException("Not implemented!");
+    }
+
+    public long getSize() {
+        return new File(getReadableDatabase().getPath()).length();
     }
 }
