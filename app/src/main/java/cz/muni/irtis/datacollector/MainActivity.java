@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -26,8 +27,10 @@ public class MainActivity extends PermissionAppCompatActivity
         implements Preference.OnPreferenceChangeListener {
 
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
+    private static final int PACKAGE_USAGE_CODE = 59707;
     private MediaProjectionManager projectionMgr;
     private BroadcastReceiver broadcastReceiver;
+    private boolean isReturnedFromSettings = false;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -88,6 +91,15 @@ public class MainActivity extends PermissionAppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        if (isReturnedFromSettings) {
+            isReturnedFromSettings = false;
+        }
+        super.onResume();
+
+    }
+
+    @Override
     public void onAttachFragment(Fragment fragment) {
         if (fragment instanceof RootScreenFragment) {
             RootScreenFragment preferenceFragment = (RootScreenFragment) fragment;
@@ -126,10 +138,20 @@ public class MainActivity extends PermissionAppCompatActivity
                         .putExtra(SchedulerService.EXTRA_RESULT_INTENT, data);
                 SchedulerService.startRunning(this, i);
                 setOnOffState(true);
-            }
-            else {
+                checkUsagePermission();
+            } else {
                 setOnOffState(false);
             }
+        }
+    }
+
+    private void checkUsagePermission() {
+        if (!isPackageUsagePermissionGranted(this)) {
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+            startActivity(intent);
         }
     }
 
