@@ -147,11 +147,8 @@ public class MainActivity extends PermissionAppCompatActivity
 
     private void checkUsagePermission() {
         if (!isPackageUsagePermissionGranted(this)) {
-            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-            startActivity(intent);
+            UsageStatsDialogFragment dialog = new UsageStatsDialogFragment();
+            dialog.show(getSupportFragmentManager(), UsageStatsDialogFragment.class.getSimpleName());
         }
     }
 
@@ -219,4 +216,6 @@ public class MainActivity extends PermissionAppCompatActivity
             rootFragment.setRuntime(elapsed);
         }
     }
+
+
 }

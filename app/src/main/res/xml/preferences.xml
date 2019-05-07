@@ -24,7 +24,7 @@
         <Preference
             app:key="localStorage"
             app:title="@string/local_storage_size"
-            app:summary="TODO MB"
+            app:summary="0 MB"
             app:icon="@drawable/ic_storage_grey_24dp"/>
 
         <Preference
@@ -36,7 +36,7 @@
         <Preference
             app:key="metricsTaken"
             app:title="@string/metrics_taken"
-            app:summary="TODO: Screenshot, Wifi..."
+            app:summary="none"
             app:icon="@drawable/ic_multiline_chart_grey_24dp"/>
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>
