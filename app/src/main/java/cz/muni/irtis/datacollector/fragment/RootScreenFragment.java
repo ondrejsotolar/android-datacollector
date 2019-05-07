@@ -1,4 +1,4 @@
-package cz.muni.irtis.datacollector;
+package cz.muni.irtis.datacollector.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,52 +9,60 @@ import java.util.List;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.TwoStatePreference;
-import cz.muni.irtis.datacollector.database.DatabaseHelper;
+import cz.muni.irtis.datacollector.R;
 
 /**
  * Root screen of the UI
  */
 public class RootScreenFragment extends PreferenceFragmentCompat {
-    private Preference.OnPreferenceChangeListener listener;
+    private Preference.OnPreferenceChangeListener preferenceChangeListener;
+    private Preference.OnPreferenceClickListener preferenceClickListener;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         Preference onOf = findPreference("onOf");
-        onOf.setOnPreferenceChangeListener(listener);
+        onOf.setOnPreferenceChangeListener(preferenceChangeListener);
+
+        Preference sync = findPreference("lastSync");
+        sync.setOnPreferenceClickListener(preferenceClickListener);
     }
 
     /**
-     * Set preference changed listener. Must be called before onCreatePreferences.
+     * Set preference changed preferenceChangeListener. Must be called before onCreatePreferences.
      * @param listener
      */
-    void setOnPreferenceChangeListener(Preference.OnPreferenceChangeListener listener) {
-        this.listener = listener;
+    public void setOnPreferenceChangeListener(Preference.OnPreferenceChangeListener listener) {
+        this.preferenceChangeListener = listener;
+    }
+
+    public void setPreferenceClickListener(Preference.OnPreferenceClickListener preferenceClickListener) {
+        this.preferenceClickListener = preferenceClickListener;
     }
 
     /**
      * Set ON/OFF switch value. Doesn't raise event.
      * @param value
      */
-    void setOnOfSwitchValue(boolean value) {
+    public void setOnOfSwitchValue(boolean value) {
         Preference preference = findPreference("onOf");
         if (preference instanceof TwoStatePreference) {
             TwoStatePreference onOfSwitch = (TwoStatePreference) preference;
             onOfSwitch.setOnPreferenceChangeListener(null);
             onOfSwitch.setChecked(value);
-            onOfSwitch.setOnPreferenceChangeListener(listener);
+            onOfSwitch.setOnPreferenceChangeListener(preferenceChangeListener);
         }
     }
 
-    void setRuntime(String value) {
+    public void setRuntime(String value) {
         Preference preference = findPreference("runtime");
         if (preference != null) {
             preference.setSummary(value);
         }
     }
 
-    void setCollectedMetrics(List<String> names) {
+    public void setCollectedMetrics(List<String> names) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < names.size(); i++) {
             sb.append(names.get(i));
@@ -69,7 +77,7 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
         preference.setSummary(sb.toString());
     }
 
-    void setLocalFilesSize(Context context, long dbSize) {
+    public void setLocalFilesSize(Context context, long dbSize) {
         File folder = context.getExternalFilesDir(null);
         long bits = getFolderSize(folder) + dbSize;
         Preference preference = findPreference("localStorage");

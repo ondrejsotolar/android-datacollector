@@ -1,4 +1,4 @@
-package cz.muni.irtis.datacollector;
+package cz.muni.irtis.datacollector.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -11,6 +11,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import cz.muni.irtis.datacollector.R;
 
 public class UsageStatsDialogFragment extends DialogFragment {
     private static final String TAG = UsageStatsDialogFragment.class.getSimpleName();

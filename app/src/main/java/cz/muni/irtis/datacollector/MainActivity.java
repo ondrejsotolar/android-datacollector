@@ -6,16 +6,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.Arrays;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.Preference;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
+import cz.muni.irtis.datacollector.fragment.RootScreenFragment;
+import cz.muni.irtis.datacollector.fragment.SyncScreenFragment;
+import cz.muni.irtis.datacollector.fragment.UsageStatsDialogFragment;
 import cz.muni.irtis.datacollector.metrics.condition.IsUsageStatsAllowed;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
@@ -25,13 +29,14 @@ import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.READ_SMS;
 
 public class MainActivity extends PermissionAppCompatActivity
-        implements Preference.OnPreferenceChangeListener {
+        implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
     private static final int PACKAGE_USAGE_CODE = 59707;
     private MediaProjectionManager projectionMgr;
     private BroadcastReceiver broadcastReceiver;
     private boolean isReturnedFromSettings = false;
+    private boolean isInScreenFragment = false;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -78,7 +83,7 @@ public class MainActivity extends PermissionAppCompatActivity
     @Override
     protected void onReady(Bundle state) {
         setContentView(R.layout.activity_main);
-        initFragment();
+        initRootScreenFragment();
         DatabaseHelper.getInstance(this);
 
         initBroadcastreceiver();
@@ -105,6 +110,7 @@ public class MainActivity extends PermissionAppCompatActivity
         if (fragment instanceof RootScreenFragment) {
             RootScreenFragment preferenceFragment = (RootScreenFragment) fragment;
             preferenceFragment.setOnPreferenceChangeListener(this);
+            preferenceFragment.setPreferenceClickListener(this);
         }
     }
 
@@ -119,6 +125,33 @@ public class MainActivity extends PermissionAppCompatActivity
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if ("lastSync".equals(preference.getKey())) {
+            initSyncScreenFragment();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isInScreenFragment) {
+            isInScreenFragment = false;
+            initRootScreenFragment();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -153,15 +186,32 @@ public class MainActivity extends PermissionAppCompatActivity
         }
     }
 
-    private void initFragment() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
-        if (fragment == null) {
-            fragment = Fragment.instantiate(this, RootScreenFragment.class.getName());
-        }
+    private void initRootScreenFragment() {
+        Fragment fragment = Fragment.instantiate(this, RootScreenFragment.class.getName());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
+
+        setActionBar(false);
         setOnOffState(SchedulerService.IS_RUNNING);
+    }
+
+    private void initSyncScreenFragment() {
+        Fragment fragment = Fragment.instantiate(this, SyncScreenFragment.class.getName());
+        isInScreenFragment = true;
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        //transaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom); // looks ugly
+        transaction.replace(R.id.fragment, fragment);
+        transaction.commit();
+
+        setActionBar(true);
+    }
+
+    private void setActionBar(boolean value) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(value);
+        }
     }
 
     private void initBroadcastreceiver() {

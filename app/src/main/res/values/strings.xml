@@ -20,4 +20,7 @@
     <string name="local_storage_size">Local storage size</string>
     <string name="last_sync">Last Sync</string>
     <string name="metrics_taken">Metrics taken</string>
+    <string name="next_sync_scheduled">Next sync scheduled</string>
+    <string name="sync_on_mobile_data">Sync on mobile data</string>
+    <string name="mobile_sync_info">Syncing on mobile data can result in more than 100 MB of data consumed daily. Check your data plan if the cost is acceptable.</string>
 </resources>
