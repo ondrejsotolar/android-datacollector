@@ -109,9 +109,14 @@ public class SchedulerService extends Service {
     private void initMetrics() {
         taskScheduler.addMetric(new BatteryState(getApplicationContext()), 10);
 
-        int resultCode = screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
-        Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
-        taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData), 10);
+        if (screenshotData != null) {
+            int resultCode = screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
+            Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
+            taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData), 10);
+        }
+        else {
+            Log.w(TAG, "screenshot data is null");
+        }
 
         taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0), 10);
 

@@ -45,4 +45,8 @@ class Const {
     static final String TABLE_SMS_CONVERSATION = "sms_conversation";
     static final String COLUMN_CONTENT = "content";
     static final String COLUMN_MESSAGE_DATE = "message_date";
+
+    static final String TABLE_APP_NAME = "app_name";
+    static final String TABLE_FOREGROUND_APP = "foreground_app";
+    static final String COLUMN_APP_NAME_ID = "app_name_id";
 }

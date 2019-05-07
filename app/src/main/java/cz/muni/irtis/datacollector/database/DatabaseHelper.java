@@ -134,6 +134,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
                 "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + "));"
         );
+        // Apps
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_APP_NAME + "(" +
+                Const.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                Const.COLUMN_NAME + " TEXT);"
+        );
+        db.execSQL("CREATE TABLE " +
+                Const.TABLE_FOREGROUND_APP + "( " +
+                Const.COLUMN_DATETIME_ID + " INTEGER, " +
+                Const.COLUMN_APP_NAME_ID + " INTEGER, " +
+                "FOREIGN KEY (" + Const.COLUMN_DATETIME_ID + ") " +
+                "REFERENCES " + Const.TABLE_DATETIME + "(" + Const.ID + ")," +
+                "FOREIGN KEY (" + Const.COLUMN_APP_NAME_ID + ") " +
+                "REFERENCES " + Const.TABLE_APP_NAME + "(" + Const.ID + "));"
+        );
     }
 
     @Override

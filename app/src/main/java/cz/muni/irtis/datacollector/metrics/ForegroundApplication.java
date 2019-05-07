@@ -6,15 +6,18 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.util.Log;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.condition.IsUsageStatsAllowed;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
 public class ForegroundApplication extends Metric {
     private static final String TAG = ForegroundApplication.class.getSimpleName();
+    private String current = "";
 
     public ForegroundApplication(Context context, Object... params) {
         super(context, params);
@@ -49,7 +52,18 @@ public class ForegroundApplication extends Metric {
             }
         }
         if (!"none".equals(topPackageName)) {
-            Log.d(TAG, topPackageName);
+            current = topPackageName;
+            save(LocalDateTime.now());
         }
+    }
+
+    @Override
+    public void save(LocalDateTime dateTime, Object... params) {
+        super.save(dateTime, params);
+        Query.saveMetric(this);
+    }
+
+    public String getCurrent() {
+        return current;
     }
 }

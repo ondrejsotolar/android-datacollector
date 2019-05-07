@@ -12,6 +12,7 @@ import java.util.List;
 
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.CallHistory;
+import cz.muni.irtis.datacollector.metrics.ForegroundApplication;
 import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
@@ -173,6 +174,27 @@ public class Query {
     }
 
     /**
+     * Save ForegroundApplication metric to database: new, current
+     *
+     * @param metric ForegroundApplication
+     * @return 0 (nothing to return)
+     */
+    public static long saveMetric(ForegroundApplication metric, Object... params) {
+        long dateTimeId = saveNewTimeEntry(metric.getDateTime());
+        String current = metric.getCurrent();
+
+        // save new apps
+        long appId = getAppId(current);
+        if (appId <= 0) {
+            appId = saveNewAppName(current);
+        }
+
+        // save foreground app
+        saveForegroundApp(dateTimeId, appId);
+        return 0;
+    }
+
+    /**
      * Get latest call date
      * @return long (INTEGER) milliseconds since epoch
      */
@@ -201,6 +223,9 @@ public class Query {
     }
 
     private static long saveNewTimeEntry(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            throw new IllegalStateException("Datetime is null!");
+        }
         ContentValues cv = new ContentValues();
         cv.put(Const.COLUMN_TIME_STAMP, dateTime.format(formatter));
 
@@ -254,7 +279,32 @@ public class Query {
         db.getWritableDatabase().insert(Const.TABLE_CONNECTED_WIFI, null, cv);
     }
 
+    private static long getAppId(String name) {
+        Cursor result = db.getReadableDatabase().rawQuery(SQL.SELECT_APP_ID, new String[]{name});
+        long id = -1;
+        if (result.moveToFirst()) {
+            id = result.getLong(0);
+        }
+        result.close();
+        return id;
+    }
 
+    private static long saveNewAppName(String name) {
+        ContentValues cv = new ContentValues();
+        cv.put(Const.COLUMN_NAME, name);
+
+        long result = db.getWritableDatabase().insert(Const.TABLE_APP_NAME, null, cv);
+        return result;
+    }
+
+    private static long saveForegroundApp(long datatimeId,  long appId) {
+        ContentValues cv = new ContentValues();
+        cv.put(Const.COLUMN_DATETIME_ID, datatimeId);
+        cv.put(Const.COLUMN_APP_NAME_ID, appId);
+
+        long result = db.getWritableDatabase().insert(Const.TABLE_FOREGROUND_APP, null, cv);
+        return result;
+    }
 
     /**
      * For testing only
@@ -270,9 +320,12 @@ public class Query {
         long cCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_CONNECTED_WIFI);
         long hCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_CALL_HISTORY);
         long smsCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_SMS_CONVERSATION);
+        long appNameCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_APP_NAME);
+        long fAppCount = DatabaseUtils.queryNumEntries(db.getReadableDatabase(), Const.TABLE_FOREGROUND_APP);
 
         Log.d(TAG, dCount + "," + bCount+ "," + sCount+ "," + lCount + "," + aCount
-                + "," + wCount + "," + vCount + "," + cCount + "," + hCount + "," + smsCount);
+                + "," + wCount + "," + vCount + "," + cCount + "," + hCount + "," + smsCount
+                + "," + appNameCount + "," + fAppCount);
     }
 
     /**

@@ -20,4 +20,9 @@ class SQL {
     static final String SELECT_MAX_MESSAGE_DATE =
             "SELECT max("+ Const.COLUMN_MESSAGE_DATE +
                     ") FROM "+ Const.TABLE_SMS_CONVERSATION;
+
+    static final String SELECT_APP_ID =
+            "SELECT "+ Const.ID +
+                    " FROM "+ Const.TABLE_APP_NAME +
+                    " WHERE "+ Const.COLUMN_NAME + " = ?";
 }
