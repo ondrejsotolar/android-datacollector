@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.Preference;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
+import cz.muni.irtis.datacollector.metrics.condition.IsUsageStatsAllowed;
 import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -146,7 +147,7 @@ public class MainActivity extends PermissionAppCompatActivity
     }
 
     private void checkUsagePermission() {
-        if (!isPackageUsagePermissionGranted(this)) {
+        if (!IsUsageStatsAllowed.isPackageUsagePermissionGranted(this)) {
             UsageStatsDialogFragment dialog = new UsageStatsDialogFragment();
             dialog.show(getSupportFragmentManager(), UsageStatsDialogFragment.class.getSimpleName());
         }

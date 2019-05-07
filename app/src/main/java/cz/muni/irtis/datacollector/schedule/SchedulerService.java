@@ -13,6 +13,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.CallHistory;
+import cz.muni.irtis.datacollector.metrics.ForegroundApplication;
 import cz.muni.irtis.datacollector.metrics.InstalledApplication;
 import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
@@ -123,6 +124,8 @@ public class SchedulerService extends Service {
         taskScheduler.addMetric(new SmsConversation(getApplicationContext()), 10);
 
         taskScheduler.addMetric(new InstalledApplication(getApplicationContext()), 10);
+
+        taskScheduler.addMetric(new ForegroundApplication(getApplicationContext()), 10);
 
         taskScheduler.addMetric(new Runtime(getApplicationContext()), 1);
     }
