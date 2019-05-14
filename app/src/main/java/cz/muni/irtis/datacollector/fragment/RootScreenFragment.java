@@ -1,6 +1,7 @@
 package cz.muni.irtis.datacollector.fragment;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import java.io.File;
@@ -77,11 +78,25 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
         preference.setSummary(sb.toString());
     }
 
-    public void setLocalFilesSize(Context context, long dbSize) {
-        File folder = context.getExternalFilesDir(null);
-        long bits = getFolderSize(folder) + dbSize;
-        Preference preference = findPreference("localStorage");
-        preference.setSummary(String.valueOf(bitsToMB(bits)) + " MB");
+    public void setLocalFilesSize(final Context context, final long dbSize) {
+        final File folder = context.getExternalFilesDir(null);
+        AsyncTask task = new AsyncTask() {
+            long bits;
+
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                this.bits = getFolderSize(folder) + dbSize;
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                Preference preference = findPreference("localStorage");
+                preference.setSummary(String.valueOf(bitsToMB(bits)) + " MB");
+            }
+        };
+        task.execute();
+
     }
 
     private long getFolderSize(File folder) {

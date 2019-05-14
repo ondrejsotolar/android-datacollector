@@ -8,6 +8,7 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.view.WindowManager;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,8 @@ import static android.content.Context.WINDOW_SERVICE;
  * Capture screenshots
  */
 public class Screenshot extends Metric {
+    private static final String TAG = Screenshot.class.getSimpleName();
+
     private final int VIRT_DISPLAY_FLAGS =
             DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY |
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC;
@@ -79,7 +82,12 @@ public class Screenshot extends Metric {
         if (!isPrerequisitiesSatisfied())
             return;
 
-        projection = mediaProjectionManager.getMediaProjection(resultCode, resultData);
+        try {
+            projection = mediaProjectionManager.getMediaProjection(resultCode, resultData);
+        } catch(IllegalStateException e) {
+            Log.w(TAG, "Screenshot skipped: Cannot start already started MediaProjection");
+            return;
+        }
         imageTransmogrifier = new ImageTransmogrifier(this);
 
         MediaProjection.Callback callback = new MediaProjection.Callback() {
@@ -98,8 +106,9 @@ public class Screenshot extends Metric {
                 imageTransmogrifier.getSurface(),
                 null,
                 handler);
-
-        projection.registerCallback(callback, handler);
+        if (projection != null) {
+            projection.registerCallback(callback, handler);
+        }
     }
 
     /**

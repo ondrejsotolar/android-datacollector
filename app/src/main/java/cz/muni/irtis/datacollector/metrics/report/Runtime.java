@@ -12,13 +12,13 @@ public class Runtime extends Metric {
 
     public Runtime(Context context, Object... params) {
         super(context, params);
-        addPrerequisity(new IsScreenOn());
+//        addPrerequisity(new IsScreenOn());
     }
 
     @Override
     public void run() {
-        if (!isPrerequisitiesSatisfied())
-            return;
+//        if (!isPrerequisitiesSatisfied())
+//            return;
 
         if (tStart < 0) {
             tStart = System.currentTimeMillis();
@@ -48,10 +48,9 @@ public class Runtime extends Metric {
         int minutes = (int) (seconds / 60);
         int hours = (int) (minutes / 60);
 
-        return String.format("%s:%s:%s",
-                longify(hours),
-                longify(minutes % 59),
-                longify(seconds % 59));
+        return longify(hours) + ":"
+                + longify(minutes % 59) +":"
+                + longify(seconds % 59);
     }
 
     private String longify(int time) {

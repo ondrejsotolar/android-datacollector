@@ -1,9 +1,12 @@
 package cz.muni.irtis.datacollector.schedule;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ public class TaskScheduler {
     private static final String TAG = TaskScheduler.class.getSimpleName();
 
     private final Handler delayHandler;
-    private final int delay1 = 1;
+    private final int delay1 = 1000;
     private final int delay10;
     private List<Metric> every1Second;
     private List<Metric> every10Seconds;

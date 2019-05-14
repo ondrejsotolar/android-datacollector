@@ -1,6 +1,8 @@
 package cz.muni.irtis.datacollector.schedule;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +13,7 @@ import android.util.Log;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import cz.muni.irtis.datacollector.MainActivity;
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.CallHistory;
 import cz.muni.irtis.datacollector.metrics.ForegroundApplication;
@@ -29,7 +32,7 @@ public class SchedulerService extends Service {
     public static final String EXTRA_RESULT_INTENT = "resultIntent";
     public static boolean IS_RUNNING = false;
 
-    private int testDelay = 10 * 1000;
+    private int testDelay = 500;
     private static final int CHANNEL_ID = 1337;
 
     private TaskScheduler taskScheduler;
@@ -95,6 +98,16 @@ public class SchedulerService extends Service {
         super.onDestroy();
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+
+        Intent intent = new Intent(this, SchedulerService.class);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+        AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60*1000, pintent);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -128,7 +141,7 @@ public class SchedulerService extends Service {
 
         taskScheduler.addMetric(new SmsConversation(getApplicationContext()), 10);
 
-        taskScheduler.addMetric(new InstalledApplication(getApplicationContext()), 10);
+//        taskScheduler.addMetric(new InstalledApplication(getApplicationContext()), 10);
 
         taskScheduler.addMetric(new ForegroundApplication(getApplicationContext()), 10);
 
