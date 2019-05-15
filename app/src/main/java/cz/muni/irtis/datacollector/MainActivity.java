@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.Preference;
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
+import cz.muni.irtis.datacollector.fragment.MetricsScreenFragment;
 import cz.muni.irtis.datacollector.fragment.RootScreenFragment;
 import cz.muni.irtis.datacollector.fragment.SyncScreenFragment;
 import cz.muni.irtis.datacollector.fragment.UsageStatsDialogFragment;
@@ -129,8 +130,11 @@ public class MainActivity extends PermissionAppCompatActivity
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if ("lastSync".equals(preference.getKey())) {
+        String key = preference.getKey();
+        if ("lastSync".equals(key)) {
             initSyncScreenFragment();
+        } else if ("metricsTaken".equals(key)) {
+            initMetricsScreenFragment();
         }
         return true;
     }
@@ -201,6 +205,16 @@ public class MainActivity extends PermissionAppCompatActivity
         isInScreenFragment = true;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         //transaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom); // looks ugly
+        transaction.replace(R.id.fragment, fragment);
+        transaction.commit();
+
+        setActionBar(true);
+    }
+
+    private void initMetricsScreenFragment() {
+        Fragment fragment = Fragment.instantiate(this, MetricsScreenFragment.class.getName());
+        isInScreenFragment = true;
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
 

@@ -28,6 +28,9 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
 
         Preference sync = findPreference("lastSync");
         sync.setOnPreferenceClickListener(preferenceClickListener);
+
+        Preference metrics = findPreference("metricsTaken");
+        metrics.setOnPreferenceClickListener(preferenceClickListener);
     }
 
     /**

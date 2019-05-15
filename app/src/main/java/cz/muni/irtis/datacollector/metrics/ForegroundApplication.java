@@ -45,10 +45,12 @@ public class ForegroundApplication extends Metric {
                 for (UsageStats usageStats : stats) {
                     runningTasks.put(usageStats.getLastTimeUsed(), usageStats);
                 }
-                if (runningTasks.isEmpty()) {
-                    topPackageName = "none";
+                if (!runningTasks.isEmpty()) {
+                    UsageStats aa = runningTasks.get(runningTasks.lastKey());
+                    if (aa != null) {
+                        topPackageName = aa.getPackageName();
+                    }
                 }
-                topPackageName = runningTasks.get(runningTasks.lastKey()).getPackageName();
             }
         }
         if (!"none".equals(topPackageName)) {

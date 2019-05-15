@@ -84,13 +84,21 @@ public class TaskScheduler {
 
     private void startCapture10() {
         for (int i = 0; i < every10Seconds.size(); i++) {
-            every10Seconds.get(i).run();
+            try {
+                every10Seconds.get(i).run();
+            } catch (Exception e) {
+                Log.e(TAG, every10Seconds.get(i).getClass().getSimpleName() + ": " + e.toString());
+            }
         }
     }
 
     private void startCapture1() {
         for (int i = 0; i < every1Second.size(); i++) {
-            every1Second.get(i).run();
+            try {
+                every1Second.get(i).run();
+            } catch (Exception e) {
+                Log.e(TAG, every1Second.get(i).getClass().getSimpleName() + ": " + e.toString());
+            }
         }
     }
 

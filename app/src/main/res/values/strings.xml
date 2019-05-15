@@ -23,4 +23,20 @@
     <string name="next_sync_scheduled">Next sync scheduled</string>
     <string name="sync_on_mobile_data">Sync on mobile data</string>
     <string name="mobile_sync_info">Syncing on mobile data can result in more than 100 MB of data consumed daily. Check your data plan if the cost is acceptable.</string>
+    <string name="screenshot_m_title">Screenshot</string>
+    <string name="screenshot_m_summary">picture of the device\'s screen</string>
+    <string name="battery_m_title">Battery level</string>
+    <string name="battery_m_summary">percentage of the batery capacity left</string>
+    <string name="foreground_m_title">Foreground application</string>
+    <string name="foreground_m_summary">full name of the currently active app</string>
+    <string name="location_m_title">Location</string>
+    <string name="location_m_summary">longitude and latitude from GPS or networks</string>
+    <string name="activity_m_title">Physical activity</string>
+    <string name="activity_m_summary">type of movement deduced from the device sensors</string>
+    <string name="calls_m_title">Call log</string>
+    <string name="calls_m_summary">history of all calls (no voice)</string>
+    <string name="sms_m_title">Sms log</string>
+    <string name="sms_m_summary">history of sms conversations with text content</string>
+    <string name="wifi_m_title">Wifi networks</string>
+    <string name="wifi_m_summary">available and connected wifi networks</string>
 </resources>

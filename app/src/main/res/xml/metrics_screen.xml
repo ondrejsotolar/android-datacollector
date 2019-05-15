@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="Metrics taken">
+        <Preference
+            app:key="screenshot_m"
+            app:title="@string/screenshot_m_title"
+            app:summary="@string/screenshot_m_summary"
+            app:icon="@drawable/ic_cast_connected_grey_24dp"/>
+        <Preference
+            app:key="battery_m"
+            app:title="@string/battery_m_title"
+            app:summary="@string/battery_m_summary"
+            app:icon="@drawable/ic_battery_60_grey_24dp"/>
+        <Preference
+            app:key="foreground_m"
+            app:title="@string/foreground_m_title"
+            app:summary="@string/foreground_m_summary"
+            app:icon="@drawable/ic_apps_grey_24dp"/>
+        <Preference
+            app:key="location_m"
+            app:title="@string/location_m_title"
+            app:summary="@string/location_m_summary"
+            app:icon="@drawable/ic_my_location_grey_24dp"/>
+        <Preference
+            app:key="activity_m"
+            app:title="@string/activity_m_title"
+            app:summary="@string/activity_m_summary"
+            app:icon="@drawable/ic_directions_run_grey_24dp"/>
+        <Preference
+            app:key="calls_m"
+            app:title="@string/calls_m_title"
+            app:summary="@string/calls_m_summary"
+            app:icon="@drawable/ic_call_grey_24dp"/>
+        <Preference
+            app:key="sms_m"
+            app:title="@string/sms_m_title"
+            app:summary="@string/sms_m_summary"
+            app:icon="@drawable/ic_sms_grey_24dp"/>
+        <Preference
+            app:key="wifi_m"
+            app:title="@string/wifi_m_title"
+            app:summary="@string/wifi_m_summary"
+            app:icon="@drawable/ic_wifi_grey_24dp"/>
+
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>
