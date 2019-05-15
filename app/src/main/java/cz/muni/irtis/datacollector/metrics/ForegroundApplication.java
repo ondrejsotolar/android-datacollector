@@ -4,9 +4,9 @@ import android.app.ActivityManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
-import android.util.Log;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
+
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -53,12 +53,12 @@ public class ForegroundApplication extends Metric {
         }
         if (!"none".equals(topPackageName)) {
             current = topPackageName;
-            save(LocalDateTime.now());
+            save(DateTime.now());
         }
     }
 
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this);
     }

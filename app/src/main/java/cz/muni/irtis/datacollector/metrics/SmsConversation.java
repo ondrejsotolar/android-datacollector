@@ -5,7 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Telephony;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class SmsConversation extends Metric {
         addMessages(records, latestSaved, sentAddress, SmsRecord.SENT);
 
         if (records.size() > 1) {
-            save(LocalDateTime.now());
+            save(DateTime.now());
         }
     }
 
@@ -54,7 +55,7 @@ public class SmsConversation extends Metric {
     }
 
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this);
     }

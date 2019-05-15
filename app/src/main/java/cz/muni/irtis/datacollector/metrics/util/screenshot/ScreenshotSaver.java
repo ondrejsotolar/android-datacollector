@@ -4,18 +4,17 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+
 import java.io.File;
 import java.io.FileOutputStream;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.Random;
 
 class ScreenshotSaver {
     private static DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-            .appendPattern("yyyyMMddHHmmss")
-            .appendValue(ChronoField.MILLI_OF_SECOND, 3)
+            .appendPattern("yyyyMMddHHmmssSSS")
             .toFormatter();
 
     /**
@@ -26,7 +25,7 @@ class ScreenshotSaver {
      * @return absolute path to file
      */
     static String processImage(final byte[] png, final Context context) {
-        String fileName = LocalDateTime.now().format(formatter) + ".png";
+        String fileName = formatter.print(DateTime.now()) + ".png";
         File output = new File(context.getExternalFilesDir(null), fileName);
         try {
             FileOutputStream fos = new FileOutputStream(output);

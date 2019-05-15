@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.util.Log;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class Query {
     private static final String TAG = Query.class.getSimpleName();
 
     private static DatabaseHelper db = DatabaseHelper.getInstance();
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Save BatteryState metric to database.
@@ -222,12 +224,12 @@ public class Query {
         return date;
     }
 
-    private static long saveNewTimeEntry(LocalDateTime dateTime) {
+    private static long saveNewTimeEntry(DateTime dateTime) {
         if (dateTime == null) {
             throw new IllegalStateException("Datetime is null!");
         }
         ContentValues cv = new ContentValues();
-        cv.put(Const.COLUMN_TIME_STAMP, dateTime.format(formatter));
+        cv.put(Const.COLUMN_TIME_STAMP, formatter.print(dateTime));
 
         long result = db.getWritableDatabase().insert(Const.TABLE_DATETIME, null, cv);
         return result;

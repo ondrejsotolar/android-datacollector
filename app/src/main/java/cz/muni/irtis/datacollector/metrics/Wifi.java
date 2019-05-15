@@ -8,7 +8,8 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class Wifi extends Metric {
     }
 
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this, params);
     }
@@ -84,9 +85,9 @@ public class Wifi extends Metric {
                 // TODO: UTF8 has double quot marks. recognize or remove.
                 String connected = wifiManager.getConnectionInfo().getSSID().replace("\"", "");
                 if (isValidSsid(connected)) {
-                    save(LocalDateTime.now(), available, connected);
+                    save(DateTime.now(), available, connected);
                 } else {
-                    save(LocalDateTime.now(), available);
+                    save(DateTime.now(), available);
                 }
             }
         }

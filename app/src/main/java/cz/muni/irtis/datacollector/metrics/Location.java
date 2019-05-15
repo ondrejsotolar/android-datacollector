@@ -9,7 +9,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
 
 import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.condition.IsLocationOn;
@@ -84,7 +84,7 @@ public class Location extends Metric {
     }
 
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this);
     }
@@ -100,7 +100,7 @@ public class Location extends Metric {
     private void onLocationChanged(android.location.Location location) {
         roundedLat = (double) Math.round(location.getLatitude() * 10000d) / 10000d;
         roundedLon = (double) Math.round(location.getLongitude() * 10000d) / 10000d;
-        save(LocalDateTime.now());
+        save(DateTime.now());
     }
 
 

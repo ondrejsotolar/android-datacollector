@@ -2,9 +2,8 @@ package cz.muni.irtis.datacollector.metrics;
 
 import android.content.Context;
 import android.os.BatteryManager;
-import android.util.Log;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
 
 import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
@@ -29,14 +28,14 @@ public class BatteryState extends Metric {
     public void run() {
         BatteryManager bm = (BatteryManager) getContext().getSystemService(BATTERY_SERVICE);
         currentLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-        save(LocalDateTime.now());
+        save(DateTime.now());
     }
 
     /**
      * Save recent metric to DB
      */
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this);
     }

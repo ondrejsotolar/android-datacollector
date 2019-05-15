@@ -1,7 +1,7 @@
 package cz.muni.irtis.datacollector.schedule;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
 
 public interface Persistent {
-    void save(LocalDateTime dateTime, Object... params);
+    void save(DateTime dateTime, Object... params);
 }

@@ -11,7 +11,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.view.WindowManager;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
 
 import cz.muni.irtis.datacollector.database.Query;
 import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
@@ -68,7 +68,7 @@ public class Screenshot extends Metric {
     }
 
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this);
     }
@@ -96,8 +96,8 @@ public class Screenshot extends Metric {
                 virtualDisplay.release();
             }
         };
-
-        virtualDisplay = projection.createVirtualDisplay(
+        if (projection != null) {
+            virtualDisplay = projection.createVirtualDisplay(
                 getClass().getSimpleName(),
                 imageTransmogrifier.getWidth(),
                 imageTransmogrifier.getHeight(),
@@ -106,7 +106,6 @@ public class Screenshot extends Metric {
                 imageTransmogrifier.getSurface(),
                 null,
                 handler);
-        if (projection != null) {
             projection.registerCallback(callback, handler);
         }
     }
@@ -126,7 +125,7 @@ public class Screenshot extends Metric {
 
         if (imagePath != null && !"".equals(imagePath)) {
             this.imagePath = imagePath;
-            save(LocalDateTime.now());
+            save(DateTime.now());
         }
     }
 

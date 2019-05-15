@@ -2,7 +2,6 @@ package cz.muni.irtis.datacollector.metrics;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 

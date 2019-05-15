@@ -5,7 +5,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,14 +43,14 @@ public class CallHistory extends Metric {
                     r.setCallDate(c.getLong(c.getColumnIndex(CallLog.Calls.DATE)));
                     records.add(r);
                 }
-                save(LocalDateTime.now());
+                save(DateTime.now());
             }
             c.close();
         }
     }
 
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this);
     }

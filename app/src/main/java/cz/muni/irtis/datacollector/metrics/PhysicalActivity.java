@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import cz.muni.irtis.datacollector.database.Query;
@@ -67,7 +67,7 @@ public class PhysicalActivity extends Metric {
     }
 
     @Override
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         super.save(dateTime, params);
         Query.saveMetric(this);
     }
@@ -79,7 +79,7 @@ public class PhysicalActivity extends Metric {
                 if ("activity_intent".equals(intent.getAction())) {
                     type = intent.getIntExtra("type", -1);
                     confidence = intent.getIntExtra("confidence", 0);
-                    save(LocalDateTime.now());
+                    save(DateTime.now());
                 }
             }
         };

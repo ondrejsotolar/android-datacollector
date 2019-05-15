@@ -4,7 +4,8 @@ package cz.muni.irtis.datacollector.schedule;
 import android.content.Context;
 import android.util.Log;
 
-import java.time.LocalDateTime;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public abstract class Metric implements Runnable, Stoppable, Persistent {
 
     private Context context;
     private Object[] params;
-    private LocalDateTime dateTimeCollected;
+    private DateTime dateTimeCollected;
     private List<Condition> prerequisitises;
     private boolean isRunning = false;
 
@@ -25,7 +26,7 @@ public abstract class Metric implements Runnable, Stoppable, Persistent {
         prerequisitises = new ArrayList<>();
     }
 
-    public void save(LocalDateTime dateTime, Object... params) {
+    public void save(DateTime dateTime, Object... params) {
         setDateTime(dateTime);
     }
 
@@ -37,11 +38,11 @@ public abstract class Metric implements Runnable, Stoppable, Persistent {
         return params;
     }
 
-    public LocalDateTime getDateTime() {
+    public DateTime getDateTime() {
         return dateTimeCollected;
     }
 
-    public void setDateTime(LocalDateTime dateTimeCollected) {
+    public void setDateTime(DateTime dateTimeCollected) {
         this.dateTimeCollected = dateTimeCollected;
     }
 

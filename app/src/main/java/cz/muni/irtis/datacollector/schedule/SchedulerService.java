@@ -32,7 +32,7 @@ public class SchedulerService extends Service {
     public static final String EXTRA_RESULT_INTENT = "resultIntent";
     public static boolean IS_RUNNING = false;
 
-    private int testDelay = 500;
+    private int testDelay = 5000;
     private static final int CHANNEL_ID = 1337;
 
     private TaskScheduler taskScheduler;
@@ -46,11 +46,11 @@ public class SchedulerService extends Service {
     public static void startRunning(Context context, Intent screenshotIntent) {
         if (!IS_RUNNING) {
             Intent i = new Intent(context, SchedulerService.class);
+            screenshotData = screenshotIntent;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                screenshotData = screenshotIntent;
                 context.startForegroundService(i);
             } else {
-                throw new IllegalStateException("Trying to start SchedulerService in the background!");
+                context.startService(i);
             }
             IS_RUNNING = true;
         }
