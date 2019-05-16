@@ -27,6 +27,7 @@ class ScreenshotSaver {
     static String processImage(final byte[] png, final Context context) {
         String fileName = formatter.print(DateTime.now()) + ".png";
         File output = new File(context.getExternalFilesDir(null), fileName);
+        String absolutePath = null;
         try {
             FileOutputStream fos = new FileOutputStream(output);
             fos.write(png);
@@ -34,20 +35,13 @@ class ScreenshotSaver {
             fos.getFD().sync();
             fos.close();
 
-            String absolutePath = output.getAbsolutePath();
-            // check if saved properly
-            MediaScannerConnection.scanFile(context,
-                    new String[] {absolutePath},
-                    new String[] {"image/png"},
-                    null);
-
+            absolutePath = output.getAbsolutePath();
             Log.d("INFO: ", absolutePath);
-            return absolutePath;
         }
         catch (Exception e) {
             Log.e("ScreenshotSaver", "Exception writing out screenshot", e);
         }
-        throw new IllegalStateException("Screenshot not saved!");
+        return absolutePath;
     }
 
     // TODO: delete

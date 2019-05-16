@@ -32,7 +32,12 @@ public class Wifi extends Metric {
     public Wifi(Context context, Object... params) {
         super(context, params);
         wifiScanReceiver = new WifiScanReceiver();
-        wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+        } else {
+            wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        }
 
         getContext().registerReceiver(wifiScanReceiver,
                 new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));

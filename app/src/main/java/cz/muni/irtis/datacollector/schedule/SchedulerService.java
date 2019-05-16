@@ -32,7 +32,7 @@ public class SchedulerService extends Service {
     public static final String EXTRA_RESULT_INTENT = "resultIntent";
     public static boolean IS_RUNNING = false;
 
-    private int testDelay = 5000;
+    private int testDelay = 1000;
     private static final int CHANNEL_ID = 1337;
 
     private TaskScheduler taskScheduler;
@@ -128,7 +128,7 @@ public class SchedulerService extends Service {
             taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData), 10);
         }
         else {
-            Log.w(TAG, "screenshot data is null");
+            Log.e(TAG, "screenshot permission data is null");
         }
 
         taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0), 10);

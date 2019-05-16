@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -84,7 +86,7 @@ public class MainActivity extends PermissionAppCompatActivity
     @Override
     protected void onReady(Bundle state) {
         setContentView(R.layout.activity_main);
-        initRootScreenFragment();
+        initRootScreenFragment(false);
         DatabaseHelper.getInstance(this);
 
         initBroadcastreceiver();
@@ -143,7 +145,7 @@ public class MainActivity extends PermissionAppCompatActivity
     public void onBackPressed() {
         if (isInScreenFragment) {
             isInScreenFragment = false;
-            initRootScreenFragment();
+            initRootScreenFragment(true);
         } else {
             super.onBackPressed();
         }
@@ -190,9 +192,12 @@ public class MainActivity extends PermissionAppCompatActivity
         }
     }
 
-    private void initRootScreenFragment() {
+    private void initRootScreenFragment(boolean isReturnFromOtherFragment) {
         Fragment fragment = Fragment.instantiate(this, RootScreenFragment.class.getName());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (isReturnFromOtherFragment) {
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        }
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
 
@@ -203,8 +208,9 @@ public class MainActivity extends PermissionAppCompatActivity
     private void initSyncScreenFragment() {
         Fragment fragment = Fragment.instantiate(this, SyncScreenFragment.class.getName());
         isInScreenFragment = true;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        //transaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom); // looks ugly
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
 
@@ -214,7 +220,9 @@ public class MainActivity extends PermissionAppCompatActivity
     private void initMetricsScreenFragment() {
         Fragment fragment = Fragment.instantiate(this, MetricsScreenFragment.class.getName());
         isInScreenFragment = true;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
 

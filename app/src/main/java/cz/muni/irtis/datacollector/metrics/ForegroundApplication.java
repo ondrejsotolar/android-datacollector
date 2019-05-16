@@ -46,9 +46,9 @@ public class ForegroundApplication extends Metric {
                     runningTasks.put(usageStats.getLastTimeUsed(), usageStats);
                 }
                 if (!runningTasks.isEmpty()) {
-                    UsageStats aa = runningTasks.get(runningTasks.lastKey());
-                    if (aa != null) {
-                        topPackageName = aa.getPackageName();
+                    UsageStats lastTask = runningTasks.get(runningTasks.lastKey());
+                    if (lastTask != null) {
+                        topPackageName = lastTask.getPackageName();
                     }
                 }
             }

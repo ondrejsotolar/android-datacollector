@@ -2,6 +2,7 @@ package cz.muni.irtis.datacollector.metrics;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.projection.MediaProjection;
@@ -9,6 +10,7 @@ import android.media.projection.MediaProjectionManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
+import android.view.Display;
 import android.view.WindowManager;
 
 import org.joda.time.DateTime;
@@ -44,6 +46,8 @@ public class Screenshot extends Metric {
     private VirtualDisplay virtualDisplay;
     private ImageTransmogrifier imageTransmogrifier;
     private String imagePath;
+    private int width;
+    private int height;
 
     /**
      * Constructor.
@@ -63,6 +67,7 @@ public class Screenshot extends Metric {
 
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
+        initScreenSize();
 
         addPrerequisity(new IsScreenOn());
     }
@@ -88,15 +93,17 @@ public class Screenshot extends Metric {
             Log.w(TAG, "Screenshot skipped: Cannot start already started MediaProjection");
             return;
         }
+        if (imageTransmogrifier != null) {
+            imageTransmogrifier.close();
+        }
         imageTransmogrifier = new ImageTransmogrifier(this);
-
         MediaProjection.Callback callback = new MediaProjection.Callback() {
             @Override
             public void onStop() {
                 virtualDisplay.release();
             }
         };
-        if (projection != null) {
+        if (projection != null && imageTransmogrifier != null) {
             virtualDisplay = projection.createVirtualDisplay(
                 getClass().getSimpleName(),
                 imageTransmogrifier.getWidth(),
@@ -108,6 +115,12 @@ public class Screenshot extends Metric {
                 handler);
             projection.registerCallback(callback, handler);
         }
+    }
+
+    @Override
+    public void stop() {
+
+        super.stop();
     }
 
     /**
@@ -139,5 +152,31 @@ public class Screenshot extends Metric {
 
     public WindowManager getWindowManager() {
         return windowManager;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    private void initScreenSize() {
+        if (width > 0 && height > 0) {
+            return;
+        }
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+
+        display.getSize(size);
+        width = size.x;
+        height = size.y;
+
+        while (width * height > (2 << 19)) {
+            width = width >> 1;
+            height = height >> 1;
+        }
     }
 }

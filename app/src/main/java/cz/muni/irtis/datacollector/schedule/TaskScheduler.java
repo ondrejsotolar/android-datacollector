@@ -18,7 +18,7 @@ public class TaskScheduler {
     private static final String TAG = TaskScheduler.class.getSimpleName();
 
     private final Handler delayHandler;
-    private final int delay1 = 1000;
+    private final int delay1 = 1000; // 1 second
     private final int delay10;
     private List<Metric> every1Second;
     private List<Metric> every10Seconds;

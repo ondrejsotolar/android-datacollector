@@ -27,32 +27,18 @@ public class ImageTransmogrifier implements ImageReader.OnImageAvailableListener
 
     public ImageTransmogrifier(Screenshot screenshotMetric) {
         this.screenshotMetric = screenshotMetric;
-
-        Display display=screenshotMetric.getWindowManager().getDefaultDisplay();
-        Point size=new Point();
-
-        display.getSize(size);
-
-        int width=size.x;
-        int height=size.y;
-
-        while (width*height > (2<<19)) {
-            width=width>>1;
-            height=height>>1;
-        }
-
-        this.width=width;
-        this.height=height;
+        width = screenshotMetric.getWidth();
+        height = screenshotMetric.getHeight();
         this.counter = 0;
 
-        imageReader=ImageReader.newInstance(width, height,
-                PixelFormat.RGBA_8888, 2);
+        imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2);
         imageReader.setOnImageAvailableListener(this, screenshotMetric.getHandler());
     }
 
     @Override
     public void onImageAvailable(ImageReader reader) {
         if (counter++ > 0) {
+            reader.close();
             return;
         }
         final Image image=imageReader.acquireLatestImage();
