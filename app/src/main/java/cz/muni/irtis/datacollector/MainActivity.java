@@ -6,12 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.transition.Slide;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.util.Arrays;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
@@ -138,6 +134,9 @@ public class MainActivity extends PermissionAppCompatActivity
         } else if ("metricsTaken".equals(key)) {
             initMetricsScreenFragment();
         }
+        else if ("localStorage".equals(key)) {
+            updateStorageSize();
+        }
         return true;
     }
 
@@ -203,6 +202,7 @@ public class MainActivity extends PermissionAppCompatActivity
 
         setActionBar(false);
         setOnOffState(SchedulerService.IS_RUNNING);
+        updateStorageSize();
     }
 
     private void initSyncScreenFragment() {
@@ -276,8 +276,7 @@ public class MainActivity extends PermissionAppCompatActivity
             RootScreenFragment rootFragment = (RootScreenFragment) fragment;
             rootFragment.setOnOfSwitchValue(value);
             rootFragment.setLocalFilesSize(this, DatabaseHelper.getInstance(this).getSize());
-            rootFragment.setCollectedMetrics(
-                    Arrays.asList("Screenshot", "Sms", "Wifi networks", "Location"));
+
 
         }
     }
@@ -290,5 +289,11 @@ public class MainActivity extends PermissionAppCompatActivity
         }
     }
 
-
+    private void updateStorageSize() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
+        if (fragment instanceof RootScreenFragment) {
+            RootScreenFragment rootFragment = (RootScreenFragment) fragment;
+            rootFragment.setLocalFilesSize(this, DatabaseHelper.getInstance(this).getSize());
+        }
+    }
 }

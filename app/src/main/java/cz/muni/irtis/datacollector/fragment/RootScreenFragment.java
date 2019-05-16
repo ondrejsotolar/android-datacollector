@@ -31,6 +31,9 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
 
         Preference metrics = findPreference("metricsTaken");
         metrics.setOnPreferenceClickListener(preferenceClickListener);
+
+        Preference storage = findPreference("localStorage");
+        storage.setOnPreferenceClickListener(preferenceClickListener);
     }
 
     /**
@@ -88,14 +91,14 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
 
             @Override
             protected Object doInBackground(Object[] objects) {
-                this.bits = getFolderSize(folder) + dbSize;
+                this.bits = getFolderSize(folder);
                 return null;
             }
 
             @Override
             protected void onPostExecute(Object o) {
                 Preference preference = findPreference("localStorage");
-                preference.setSummary(String.valueOf(bitsToMB(bits)) + " MB");
+                preference.setSummary("Files: " + String.valueOf(bitsToMB(bits)) + " MB, Database: " + bitsToMB(dbSize) + " MB");
             }
         };
         task.execute();
