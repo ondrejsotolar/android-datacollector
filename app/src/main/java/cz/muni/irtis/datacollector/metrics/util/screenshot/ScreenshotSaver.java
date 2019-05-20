@@ -2,6 +2,7 @@ package cz.muni.irtis.datacollector.metrics.util.screenshot;
 
 import android.content.Context;
 import android.media.MediaScannerConnection;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.joda.time.DateTime;
@@ -45,37 +46,26 @@ class ScreenshotSaver {
     }
 
     // TODO: delete
-    public static String processImage_Threaded(final byte[] png, final String dir, final Context context) {
-        final String[] absolutePath = new String[1];
-        new Thread() {
+    public static String processImage_Threaded(final byte[] png, File externalFilesDir) {
+        final String fileName = formatter.print(DateTime.now()) + ".png";
+        final File output = new File(externalFilesDir, fileName);
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            public void run() {
-                Random rand = new Random();
-                int n = rand.nextInt(10000) + 1;
-
-                File output=new File(dir,"screenshot_" + n  + ".png");
-
+            protected Void doInBackground(Void... voids) {
                 try {
                     FileOutputStream fos=new FileOutputStream(output);
-
                     fos.write(png);
                     fos.flush();
                     fos.getFD().sync();
                     fos.close();
-
-                    MediaScannerConnection.scanFile(context,
-                            new String[] {output.getAbsolutePath()},
-                            new String[] {"image/png"},
-                            null);
-
                     Log.i("INFO: ", output.getAbsolutePath());
-                    absolutePath[0] = output.getAbsolutePath();
                 }
                 catch (Exception e) {
                     Log.e(getClass().getSimpleName(), "Exception writing out screenshot", e);
                 }
+                return null;
             }
-        }.start();
-        return absolutePath[0];
+        }.execute();
+        return output.getAbsolutePath();
     }
 }

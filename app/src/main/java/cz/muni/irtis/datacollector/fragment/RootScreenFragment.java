@@ -36,6 +36,11 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
         storage.setOnPreferenceClickListener(preferenceClickListener);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     /**
      * Set preference changed preferenceChangeListener. Must be called before onCreatePreferences.
      * @param listener
