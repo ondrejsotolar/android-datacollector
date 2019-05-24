@@ -6,7 +6,6 @@ import android.os.BatteryManager;
 import org.joda.time.DateTime;
 
 import cz.muni.irtis.datacollector.database.Query;
-import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
 import static android.content.Context.BATTERY_SERVICE;

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
 public class Runtime extends Metric {
@@ -12,14 +11,10 @@ public class Runtime extends Metric {
 
     public Runtime(Context context, Object... params) {
         super(context, params);
-//        addPrerequisity(new IsScreenOn());
     }
 
     @Override
     public void run() {
-//        if (!isPrerequisitiesSatisfied())
-//            return;
-
         if (tStart < 0) {
             tStart = System.currentTimeMillis();
         } else {

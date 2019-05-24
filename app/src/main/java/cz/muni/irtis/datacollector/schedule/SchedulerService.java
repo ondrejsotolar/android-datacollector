@@ -23,6 +23,9 @@ import cz.muni.irtis.datacollector.metrics.report.Runtime;
 import cz.muni.irtis.datacollector.metrics.Screenshot;
 import cz.muni.irtis.datacollector.metrics.Wifi;
 
+/**
+ * Initialize & schedule metric execution
+ */
 public class SchedulerService extends Service {
     private static final String TAG = SchedulerService.class.getSimpleName();
 
@@ -41,6 +44,7 @@ public class SchedulerService extends Service {
     /**
      * Start the service. If version is high enough, starts in foreground.
      * @param context App context
+     * @param screenshotIntent permission for MediaProjection
      */
     public static void startRunning(Context context, Intent screenshotIntent) {
         if (!IS_RUNNING) {
@@ -58,6 +62,11 @@ public class SchedulerService extends Service {
         }
     }
 
+    /**
+     * Stop the service. In subsequest onDestroy() all scheduled metrics are stopped also.
+     * @param context
+     * @param serviceName
+     */
     public static void stopRunning(Context context, Intent serviceName) {
         if (IS_RUNNING) {
             context.stopService(serviceName);

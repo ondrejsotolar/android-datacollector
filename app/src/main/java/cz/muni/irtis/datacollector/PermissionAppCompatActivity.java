@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+/**
+ * Handle runtime permissions
+ */
 public abstract class PermissionAppCompatActivity extends AppCompatActivity {
 
     abstract protected String[] getDesiredDangerousPermissions();

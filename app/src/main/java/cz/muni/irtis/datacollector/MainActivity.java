@@ -28,10 +28,7 @@ public class MainActivity extends PermissionAppCompatActivity
         implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
-    private static final int PACKAGE_USAGE_CODE = 59707;
     private MediaProjectionManager projectionMgr;
-
-    private boolean isReturnedFromSettings = false;
     private boolean isInScreenFragment = false;
 
     @Override
@@ -59,7 +56,6 @@ public class MainActivity extends PermissionAppCompatActivity
                 READ_CONTACTS,
                 READ_CALL_LOG,
                 READ_SMS
-
         };
     }
 
@@ -86,15 +82,6 @@ public class MainActivity extends PermissionAppCompatActivity
             setOnOffState(false);
             createScreenCaptureIntent();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        if (isReturnedFromSettings) {
-            isReturnedFromSettings = false;
-        }
-        super.onResume();
-
     }
 
     @Override
@@ -215,6 +202,10 @@ public class MainActivity extends PermissionAppCompatActivity
         setActionBar(true);
     }
 
+    /**
+     * Add back arrow to title
+     * @param value
+     */
     private void setActionBar(boolean value) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -245,14 +236,16 @@ public class MainActivity extends PermissionAppCompatActivity
         }
     }
 
+    /**
+     * Set UI switch & update storage size info
+     * @param value
+     */
     private void setOnOffState(boolean value) {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (fragment instanceof RootScreenFragment) {
             RootScreenFragment rootFragment = (RootScreenFragment) fragment;
             rootFragment.setOnOfSwitchValue(value);
             rootFragment.setLocalFilesSize(this, DatabaseHelper.getInstance(this).getSize());
-
-
         }
     }
 }

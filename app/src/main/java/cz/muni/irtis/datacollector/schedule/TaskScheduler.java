@@ -1,6 +1,5 @@
 package cz.muni.irtis.datacollector.schedule;
 
-import android.os.Debug;
 import android.os.Handler;
 import android.util.Log;
 
@@ -9,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Run & stop scheduled metrics
+ */
 public class TaskScheduler {
-    public static final int ONE_SECOND = 1000;
+    static final int ONE_SECOND = 1000;
     static final int ONCE = 0;
     private static final String TAG = TaskScheduler.class.getSimpleName();
     private final Handler delayHandler;

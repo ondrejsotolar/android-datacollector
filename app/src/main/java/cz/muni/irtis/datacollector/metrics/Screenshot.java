@@ -16,7 +16,6 @@ import android.view.WindowManager;
 import org.joda.time.DateTime;
 
 import cz.muni.irtis.datacollector.database.Query;
-import cz.muni.irtis.datacollector.metrics.condition.IsScreenOn;
 import cz.muni.irtis.datacollector.metrics.util.screenshot.ImageTransmogrifier;
 import cz.muni.irtis.datacollector.schedule.Metric;
 
@@ -70,8 +69,6 @@ public class Screenshot extends Metric {
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
         initScreenSize();
-
-        addPrerequisity(new IsScreenOn());
     }
 
     @Override
@@ -86,10 +83,7 @@ public class Screenshot extends Metric {
      */
     @Override
     public void run() {
-        if (!isPrerequisitiesSatisfied())
-            return;
-
-        try {
+         try {
             if (projection == null) {
                 projection = mediaProjectionManager.getMediaProjection(resultCode, resultData);
             }

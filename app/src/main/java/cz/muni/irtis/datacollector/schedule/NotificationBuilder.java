@@ -13,6 +13,9 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import cz.muni.irtis.datacollector.MainActivity;
 
+/**
+ * Build ongoing notification for the service
+ */
 public class NotificationBuilder {
     private static final String CHANNEL_MIN="channel_min";
     private static final String CHANNEL_LOW="channel_low";
@@ -34,6 +37,11 @@ public class NotificationBuilder {
         notificationManager.createNotificationChannel(channel);
     }
 
+    /**
+     * Buld notification. OnClick navigate back to activity.
+     * @param context
+     * @return
+     */
     Notification buildForegroundNotification(Context context) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_LOW);
         builder.setOngoing(true)

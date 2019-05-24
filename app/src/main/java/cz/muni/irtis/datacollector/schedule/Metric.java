@@ -11,6 +11,9 @@ import java.util.List;
 
 import cz.muni.irtis.datacollector.metrics.condition.Condition;
 
+/**
+ * Base class for metrics.
+ */
 public abstract class Metric implements Runnable, Stoppable, Persistent {
     private final String TAG = this.getClass().getSimpleName();
 
