@@ -48,6 +48,7 @@ public class Screenshot extends Metric {
     private String imagePath;
     private int width;
     private int height;
+    private int delay = 5000;
 
     /**
      * Constructor.
@@ -64,6 +65,7 @@ public class Screenshot extends Metric {
 
         resultCode = (int) params[0];
         resultData = (Intent) params[1];
+        delay = (int) params[2];
 
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
@@ -95,9 +97,7 @@ public class Screenshot extends Metric {
             Log.w(TAG, "Screenshot skipped: Cannot start already started MediaProjection");
             return;
         }
-//        if (imageTransmogrifier != null) {
-//            imageTransmogrifier.close();
-//        }
+
         imageTransmogrifier = new ImageTransmogrifier(this);
         MediaProjection.Callback callback = new MediaProjection.Callback() {
             @Override
@@ -107,14 +107,14 @@ public class Screenshot extends Metric {
         };
         if (projection != null && imageTransmogrifier != null) {
             virtualDisplay = projection.createVirtualDisplay(
-                getClass().getSimpleName(),
-                imageTransmogrifier.getWidth(),
-                imageTransmogrifier.getHeight(),
-                getContext().getResources().getDisplayMetrics().densityDpi,
-                VIRT_DISPLAY_FLAGS,
-                imageTransmogrifier.getSurface(),
-                null,
-                handler);
+                    getClass().getSimpleName(),
+                    imageTransmogrifier.getWidth(),
+                    imageTransmogrifier.getHeight(),
+                    getContext().getResources().getDisplayMetrics().densityDpi,
+                    VIRT_DISPLAY_FLAGS,
+                    imageTransmogrifier.getSurface(),
+                    null,
+                    handler);
             projection.registerCallback(callback, handler);
         }
     }
@@ -128,6 +128,9 @@ public class Screenshot extends Metric {
             }
             projection = null;
         }
+        if (imageTransmogrifier != null) {
+            imageTransmogrifier.close();
+        }
         super.stop();
     }
 
@@ -136,16 +139,6 @@ public class Screenshot extends Metric {
      * @param imagePath absolute path to image
      */
     public void finishCapture(String imagePath) {
-//        if (projection != null) {
-//            projection.stop();
-            if (virtualDisplay != null) {
-                virtualDisplay.release();
-            }
-//            projection = null;
-//        }
-        if (imageTransmogrifier != null) {
-            imageTransmogrifier.close();
-        }
         if (imagePath != null && !"".equals(imagePath)) {
             this.imagePath = imagePath;
             save(DateTime.now());
@@ -170,6 +163,10 @@ public class Screenshot extends Metric {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getDelay() {
+        return delay;
     }
 
     private void initScreenSize() {

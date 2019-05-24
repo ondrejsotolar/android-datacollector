@@ -6,18 +6,16 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.util.List;
-
 import androidx.annotation.Nullable;
-import cz.muni.irtis.datacollector.MainActivity;
+
 import cz.muni.irtis.datacollector.metrics.BatteryState;
 import cz.muni.irtis.datacollector.metrics.CallHistory;
 import cz.muni.irtis.datacollector.metrics.ForegroundApplication;
-import cz.muni.irtis.datacollector.metrics.InstalledApplication;
 import cz.muni.irtis.datacollector.metrics.Location;
 import cz.muni.irtis.datacollector.metrics.PhysicalActivity;
 import cz.muni.irtis.datacollector.metrics.SmsConversation;
@@ -32,7 +30,8 @@ public class SchedulerService extends Service {
     public static final String EXTRA_RESULT_INTENT = "resultIntent";
     public static boolean IS_RUNNING = false;
 
-    private int testDelay = 1000;
+    private final int testDelay = 1 * TaskScheduler.ONE_SECOND;
+    private final int updateUiDelay = 1 * TaskScheduler.ONE_SECOND;
     private static final int CHANNEL_ID = 1337;
 
     private TaskScheduler taskScheduler;
@@ -71,7 +70,7 @@ public class SchedulerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        taskScheduler = new TaskScheduler(testDelay);
+        taskScheduler = new TaskScheduler();
         initMetrics();
         notificationBuilder = new NotificationBuilder(
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE));
@@ -115,36 +114,38 @@ public class SchedulerService extends Service {
         throw new IllegalStateException("Non-bindable service");
     }
 
-    public List<String> getCollectedMetricNames() {
-        return taskScheduler.get10sMetricNames();
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        taskScheduler.onConfigurationChanged();
     }
 
     private void initMetrics() {
-        taskScheduler.addMetric(new BatteryState(getApplicationContext()), 10);
+        taskScheduler.addMetric(new BatteryState(getApplicationContext()), testDelay);
 
         if (screenshotData != null) {
             int resultCode = screenshotData.getIntExtra(EXTRA_RESULT_CODE, 1337);
             Intent resultData = screenshotData.getParcelableExtra(EXTRA_RESULT_INTENT);
-            taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData), 10);
+            taskScheduler.addMetric(new Screenshot(getApplicationContext(), resultCode, resultData,
+                    testDelay), TaskScheduler.ONCE);
         }
         else {
             Log.e(TAG, "screenshot permission data is null");
         }
 
-        taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0), 10);
+        taskScheduler.addMetric(new Location(getApplicationContext(), testDelay, 0),testDelay);
 
-        taskScheduler.addMetric(new PhysicalActivity(getApplicationContext(), testDelay), 10);
+        taskScheduler.addMetric(new PhysicalActivity(getApplicationContext(), testDelay), TaskScheduler.ONCE);
 
-        taskScheduler.addMetric(new Wifi(getApplicationContext()), 10);
+        taskScheduler.addMetric(new Wifi(getApplicationContext()), testDelay);
 
-        taskScheduler.addMetric(new CallHistory(getApplicationContext()), 10);
+        taskScheduler.addMetric(new CallHistory(getApplicationContext()), testDelay);
 
-        taskScheduler.addMetric(new SmsConversation(getApplicationContext()), 10);
+        taskScheduler.addMetric(new SmsConversation(getApplicationContext()), testDelay);
 
-//        taskScheduler.addMetric(new InstalledApplication(getApplicationContext()), 10);
+        taskScheduler.addMetric(new ForegroundApplication(getApplicationContext()), testDelay);
 
-        taskScheduler.addMetric(new ForegroundApplication(getApplicationContext()), 10);
-
-        taskScheduler.addMetric(new Runtime(getApplicationContext()), 1);
+        taskScheduler.addMetric(new Runtime(getApplicationContext()), updateUiDelay);
     }
 }

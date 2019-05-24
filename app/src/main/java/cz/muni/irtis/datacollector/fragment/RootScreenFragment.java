@@ -1,16 +1,24 @@
 package cz.muni.irtis.datacollector.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import java.io.File;
 import java.util.List;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.TwoStatePreference;
 import cz.muni.irtis.datacollector.R;
+import cz.muni.irtis.datacollector.database.DatabaseHelper;
+import cz.muni.irtis.datacollector.schedule.SchedulerService;
 
 /**
  * Root screen of the UI
@@ -18,6 +26,8 @@ import cz.muni.irtis.datacollector.R;
 public class RootScreenFragment extends PreferenceFragmentCompat {
     private Preference.OnPreferenceChangeListener preferenceChangeListener;
     private Preference.OnPreferenceClickListener preferenceClickListener;
+    private BroadcastReceiver broadcastReceiver;
+    private static String lastRuntime = "00:00:00";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -34,11 +44,30 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
 
         Preference storage = findPreference("localStorage");
         storage.setOnPreferenceClickListener(preferenceClickListener);
+
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        initBroadcastreceiver();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver,
+                new IntentFilter("elapsed_time"));
+
+        setRuntime(lastRuntime);
+        setActionBar(false);
+        setOnOfSwitchValue(SchedulerService.IS_RUNNING);
+        setLocalFilesSize(getContext(), DatabaseHelper.getInstance(getContext()).getSize());
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(broadcastReceiver);
+
+        super.onDestroyView();
     }
 
     /**
@@ -91,43 +120,70 @@ public class RootScreenFragment extends PreferenceFragmentCompat {
 
     public void setLocalFilesSize(final Context context, final long dbSize) {
         final File folder = context.getExternalFilesDir(null);
-        AsyncTask task = new AsyncTask() {
-            long bits;
+        FilesAsyncTask task = new FilesAsyncTask();
+        task.execute(folder, dbSize, findPreference("localStorage"));
 
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                this.bits = getFolderSize(folder);
-                return null;
-            }
+    }
 
+
+
+    private void setActionBar(boolean value) {
+        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(value);
+        }
+    }
+
+    private void initBroadcastreceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
-            protected void onPostExecute(Object o) {
-                Preference preference = findPreference("localStorage");
-                preference.setSummary("Files: " + String.valueOf(bitsToMB(bits)) + " MB, Database: " + bitsToMB(dbSize) + " MB");
+            public void onReceive(Context context, Intent intent) {
+                if ("elapsed_time".equals(intent.getAction())) {
+                    lastRuntime = intent.getStringExtra("elapsed");
+                    setRuntime(lastRuntime);
+                }
             }
         };
-        task.execute();
-
     }
 
-    private long getFolderSize(File folder) {
-        long length = 0;
-        File[] files = folder.listFiles();
-        int count = files.length;
-        for (int i = 0; i < count; i++) {
-            if (files[i].isFile()) {
-                length += files[i].length();
-            }
-            else {
-                length += getFolderSize(files[i]);
-            }
+    private static class FilesAsyncTask extends AsyncTask<Object, Void, Void>{
+        private long bits;
+        private long dbSize;
+        Preference toUpdate;
+
+        @Override
+        protected Void doInBackground(Object... params) {
+            this.bits = getFolderSize((File) params[0]);
+            this.dbSize = (long) params[1];
+            this.toUpdate = (Preference) params[2];
+            return null;
         }
-        return length;
-    }
 
-    private long bitsToMB(long bits) {
-        int mb = 1024*1024;
-        return bits < mb ? 0 : bits / mb;
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            toUpdate.setSummary("Files: " + bitsToMB(bits) + " MB, Database: " + bitsToMB(dbSize) + " MB");
+            super.onPostExecute(aVoid);
+        }
+
+        private long getFolderSize(File folder) {
+            long length = 0;
+            File[] files = folder.listFiles();
+            int count = files.length;
+            for (int i = 0; i < count; i++) {
+                if (files[i].isFile()) {
+                    length += files[i].length();
+                }
+                else {
+                    length += getFolderSize(files[i]);
+                }
+            }
+            return length;
+        }
+
+        private long bitsToMB(long bits) {
+            int mb = 1024*1024;
+            return bits < mb ? 0 : bits / mb;
+        }
     }
 
 }

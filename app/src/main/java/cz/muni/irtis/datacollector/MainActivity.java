@@ -1,9 +1,6 @@
 package cz.muni.irtis.datacollector;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -12,8 +9,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.Preference;
+
 import cz.muni.irtis.datacollector.database.DatabaseHelper;
 import cz.muni.irtis.datacollector.fragment.MetricsScreenFragment;
 import cz.muni.irtis.datacollector.fragment.RootScreenFragment;
@@ -33,7 +30,7 @@ public class MainActivity extends PermissionAppCompatActivity
     private static final int SCREENSHOT_REQUEST_CODE = 59706;
     private static final int PACKAGE_USAGE_CODE = 59707;
     private MediaProjectionManager projectionMgr;
-    private BroadcastReceiver broadcastReceiver;
+
     private boolean isReturnedFromSettings = false;
     private boolean isInScreenFragment = false;
 
@@ -85,10 +82,6 @@ public class MainActivity extends PermissionAppCompatActivity
         initRootScreenFragment(false);
         DatabaseHelper.getInstance(this);
 
-        initBroadcastreceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
-                new IntentFilter("elapsed_time"));
-
         if (!SchedulerService.IS_RUNNING) {
             setOnOffState(false);
             createScreenCaptureIntent();
@@ -133,9 +126,6 @@ public class MainActivity extends PermissionAppCompatActivity
             initSyncScreenFragment();
         } else if ("metricsTaken".equals(key)) {
             initMetricsScreenFragment();
-        }
-        else if ("localStorage".equals(key)) {
-            updateStorageSize();
         }
         return true;
     }
@@ -199,10 +189,6 @@ public class MainActivity extends PermissionAppCompatActivity
         }
         transaction.replace(R.id.fragment, fragment);
         transaction.commit();
-
-        setActionBar(false);
-        setOnOffState(SchedulerService.IS_RUNNING);
-        updateStorageSize();
     }
 
     private void initSyncScreenFragment() {
@@ -236,17 +222,6 @@ public class MainActivity extends PermissionAppCompatActivity
         }
     }
 
-    private void initBroadcastreceiver() {
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("elapsed_time".equals(intent.getAction())) {
-                    updateElapsedTime(intent.getStringExtra("elapsed"));
-                }
-            }
-        };
-    }
-
     /**
      * Request user permission for taking screenshots
      */
@@ -278,22 +253,6 @@ public class MainActivity extends PermissionAppCompatActivity
             rootFragment.setLocalFilesSize(this, DatabaseHelper.getInstance(this).getSize());
 
 
-        }
-    }
-
-    private void updateElapsedTime(String elapsed) {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
-        if (fragment instanceof RootScreenFragment) {
-            RootScreenFragment rootFragment = (RootScreenFragment) fragment;
-            rootFragment.setRuntime(elapsed);
-        }
-    }
-
-    private void updateStorageSize() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment);
-        if (fragment instanceof RootScreenFragment) {
-            RootScreenFragment rootFragment = (RootScreenFragment) fragment;
-            rootFragment.setLocalFilesSize(this, DatabaseHelper.getInstance(this).getSize());
         }
     }
 }
