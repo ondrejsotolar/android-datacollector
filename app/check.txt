@@ -1,0 +1,2 @@
+- Kdyz me appka pozada o povoleni "Usage data permission" a zepta se, jestli chci otevrit nastaveni,
+neda mi moznost to odmitnout a vzdycky me presune do nastaveni

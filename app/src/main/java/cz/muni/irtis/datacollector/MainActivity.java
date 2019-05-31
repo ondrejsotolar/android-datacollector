@@ -95,6 +95,7 @@ public class MainActivity extends PermissionAppCompatActivity
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
+        // konstanty, tady vubec nevim, o co jde
         if ("onOf".equals(preference.getKey())) {
             boolean preferenceValue = (boolean) newValue;
             if (preferenceValue) {
@@ -109,6 +110,7 @@ public class MainActivity extends PermissionAppCompatActivity
     @Override
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
+        // konstanty, vsechny preference
         if ("lastSync".equals(key)) {
             initSyncScreenFragment();
         } else if ("metricsTaken".equals(key)) {
@@ -206,6 +208,8 @@ public class MainActivity extends PermissionAppCompatActivity
      * Add back arrow to title
      * @param value
      */
+    // To je k cemu? Proc to nenastavis jednou v onCreate(), ale volas to pokazde?
+    // A k cemu je ten argument, ktery je vzdy true?
     private void setActionBar(boolean value) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
